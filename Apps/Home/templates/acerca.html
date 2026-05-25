@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+  <!-- Page Title -->
+    <div class="page-title light-background">
+      <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1 class="mb-2 mb-lg-0">Acerca de</h1>
+        <nav class="breadcrumbs">
+          <ol>
+            <li><a href={% url 'Home:homeapp' %}>Inicio</a></li>
+            <li class="current">Acerca de</li>
+          </ol>
+        </nav>
+      </div>
+    </div><!-- End Page Title -->
+
+
+    <section id="about" class="about section">
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row gy-4">
+          <div class="col-lg-6 order-1 order-lg-2 d-flex align-items-center justify-content-center bg-warning bg-opacity-25 rounded-4 p-2">
+            <img src="https://www.fayerwayer.com/resizer/v2/IZ463SATERA3LKWI5KQ3BMFBBA.jpeg?auth=ed68a9df4b5ddc511e49b51034cc084b5a35cbe07f84efef85ba92e1a8102938&width=800&height=373" class="img-fluid rounded-4 shadow" style="max-height:340px; object-fit:cover;" alt="Tienda de Tecnología">
+          </div>
+          <div class="col-lg-6 order-2 order-lg-1 content bg-light bg-gradient rounded-4 p-4">
+            <h3>Sobre <span style="color:#d35400;">PixelTech</span></h3>
+            <p class="fst-italic">
+              En <b>PixelTech</b> ofrecemos una tienda en línea specializada en dispositivos tecnológicos de última generación. Nuestro objetivo es acercar a los usuarios productos confiables, con soporte y garantía, a precios competitivos.
+            </p>
+            <ul>
+              <li><i class="bi bi-check2-all"></i> <span>Catálogo amplio: smartphones, laptops, accesorios y gadgets inteligentes.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Soporte técnico y políticas de devolución claras para tu tranquilidad.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Precios competitivos con ofertas exclusivas para clientes frecuentes.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Garantía extendida disponible en todos nuestros productos.</span></li>
+            </ul>
+            <p>
+              Nuestro equipo selecciona cuidadosamente cada producto para garantizar calidad y rendimiento. Además ofrecemos guías, comparativas y atención personalizada para ayudarte a elegir el dispositivo ideal según tus necesidades.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section><!-- /About Section -->
+
+    
+  <section id="why-us" class="why-us section mt-0 pt-0">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>¿Por qué elegirnos?</h2>
+        <p>Descubre lo que nos hace único en PixelTech</p>
+      </div>
+      <div class="container">
+        <div class="row gy-4">
+          <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="card h-100 border-0 shadow-sm bg-warning bg-opacity-25">
+              <div class="card-body">
+                <span class="badge bg-success mb-2">01</span>
+                <h4 class="card-title">Catálogo Amplio</h4>
+                <p class="card-text">Smartphones, laptops, accesorios y gadgets inteligentes de última generación. Seleccionamos cuidadosamente cada producto para garantizar calidad y rendimiento.</p>
+              </div>
+            </div>
+          </div><!-- Card Item -->
+          <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="card h-100 border-0 shadow-sm bg-info bg-opacity-25">
+              <div class="card-body">
+                <span class="badge bg-success mb-2">02</span>
+                <h4 class="card-title">Envíos Rápidos y Seguros</h4>
+                <p class="card-text">Entregas confiables a todo el país con seguimiento completo. Garantía y soporte técnico para tu tranquilidad en cada compra.</p>
+              </div>
+            </div>
+          </div><!-- Card Item -->
+          <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="card h-100 border-0 shadow-sm bg-danger bg-opacity-25">
+              <div class="card-body">
+                <span class="badge bg-success mb-2">03</span>
+                <h4 class="card-title">Atención Personalizada</h4>
+                <p class="card-text">Guías, comparativas y soporte experto para ayudarte a elegir el dispositivo ideal según tus necesidades. Políticas de devolución claras y flexibles.</p>
+              </div>
+            </div>
+          </div><!-- Card Item -->
+        </div>
+      </div>
+    </section>
+{% endblock %}
