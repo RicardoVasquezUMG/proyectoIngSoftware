@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block contenido %}
+  <main class="main">
+    <!-- Register Section -->
+    <section id="register" class="register section">
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row justify-content-center">
+          <div class="col-lg-10">
+            <div class="registration-form-wrapper">
+              <div class="form-header text-center">
+                <h2>Crea tu cuenta</h2>
+                <p>Crea tu cuenta y comienza a comprar con nosotros</p>
+              </div>
+              
+                <div class="row">
+                  <div class="col-lg-8 mx-auto">
+                    <form method="post">
+                      {% csrf_token %}
+                      {% if form.errors %}
+                        <div class="alert alert-danger">
+                          <ul>
+                            {% for field in form %}
+                              {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                              {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                              <li>{{ error }}</li>
+                            {% endfor %}
+                          </ul>
+                        </div>
+                      {% endif %}
+                      <div class="form-floating mb-3">
+                        {{ form.nombre|add_class:"form-control"|attr:"placeholder:Nombre"|attr:"autocomplete:name"|attr:"required" }}
+                        <label for="{{ form.nombre.id_for_label }}">Nombre</label>
+                      </div>
+                      <div class="form-floating mb-3">
+                        {{ form.apellido|add_class:"form-control"|attr:"placeholder:Apellido"|attr:"autocomplete:family-name"|attr:"required" }}
+                        <label for="{{ form.apellido.id_for_label }}">Apellido</label>
+                      </div>
+                      <div class="form-floating mb-3">
+                        {{ form.telefono|add_class:"form-control"|attr:"placeholder:Teléfono"|attr:"autocomplete:tel"|attr:"required" }}
+                        <label for="{{ form.telefono.id_for_label }}">Teléfono</label>
+                      </div>
+                      <div class="form-floating mb-3">
+                        {{ form.email|add_class:"form-control"|attr:"placeholder:Correo Electrónico"|attr:"autocomplete:email"|attr:"required" }}
+                        <label for="{{ form.email.id_for_label }}">Correo Electrónico</label>
+                      </div>
+                      <div class="form-floating mb-3 position-relative">
+                        {{ form.password1|add_class:"form-control"|attr:"placeholder:Contraseña"|attr:"autocomplete:new-password"|attr:"required"|attr:"minlength:8"|attr:"id:register-password1" }}
+                        <label for="{{ form.password1.id_for_label }}">Contraseña</label>
+                        <span class="password-toggle" style="position:absolute;top:12px;right:16px;cursor:pointer;" onclick="togglePassword('register-password1', this)">
+                          <i class="bi bi-eye"></i>
+                        </span>
+                      </div>
+                      <div class="form-floating mb-3 position-relative">
+                        {{ form.password2|add_class:"form-control"|attr:"placeholder:Confirmar contraseña"|attr:"autocomplete:new-password"|attr:"required"|attr:"minlength:8"|attr:"id:register-password2" }}
+                        <label for="{{ form.password2.id_for_label }}">Confirmar contraseña</label>
+                        <span class="password-toggle" style="position:absolute;top:12px;right:16px;cursor:pointer;" onclick="togglePassword('register-password2', this)">
+                          <i class="bi bi-eye"></i>
+                        </span>
+                      </div>
+<script>
+function togglePassword(inputId, toggleElem) {
+  var input = document.getElementById(inputId);
+  if (input.type === "password") {
+    input.type = "text";
+    toggleElem.querySelector('i').classList.remove('bi-eye');
+    toggleElem.querySelector('i').classList.add('bi-eye-slash');
+  } else {
+    input.type = "password";
+    toggleElem.querySelector('i').classList.remove('bi-eye-slash');
+    toggleElem.querySelector('i').classList.add('bi-eye');
+  }
+}
+</script>
+                      <div class="d-grid mb-4">
+                        <button type="submit" class="btn btn-register">Crear Cuenta</button>
+                      </div>
+                      <div class="login-link text-center">
+                        <p>¿Ya tienes una cuenta? <a href="{% url 'Cliente:loginapp' %}">Iniciar sesión</a></p>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+             
+              
+
+              <div class="decorative-elements">
+                <div class="circle circle-1"></div>
+                <div class="circle circle-2"></div>
+                <div class="circle circle-3"></div>
+                <div class="square square-1"></div>
+                <div class="square square-2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section><!-- /Register Section -->
+
+  </main>
+  {% if form.errors %}
+  <div class="alert alert-danger">
+    <ul>
+      {% for field in form %}
+        {% for error in field.errors %}
+          <li>{{ field.label }}: {{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+{% endblock %}
