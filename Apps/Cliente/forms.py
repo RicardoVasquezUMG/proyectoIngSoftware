@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Cliente
+from .models import Categoria, Cliente
 
 
 class ClienteForm(UserCreationForm):
@@ -25,3 +25,7 @@ class ClienteForm(UserCreationForm):
             Cliente.objects.update_or_create(perfil=user, defaults={'telefono': self.cleaned_data['telefono']})
         return user
 
+class CategoriaForm(forms.ModelForm):
+    class Meta:
+        model = Categoria
+        fields = ['nombre']
