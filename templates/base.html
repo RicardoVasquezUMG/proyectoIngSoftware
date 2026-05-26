@@ -108,12 +108,12 @@
                 </div>
                 <div class="dropdown-footer">
                   {% if user.is_authenticated %}
-                    <form method="post" action="{#}">
+                    <form method="post" action="{% url 'Cliente:logout' %}">
                       {% csrf_token %}
                       <button type="submit" class="btn btn-danger w-100">Cerrar Sesión</button>
                     </form>
                   {% else %}
-                    <a href="{% url 'Cliente:loginapp' %}" class="btn btn-primary w-100 mb-2">Registrar</a>
+                    <a href="{% url 'Cliente:registrarCliente' %}" class="btn btn-primary w-100 mb-2">Registrar</a>
                     <a href="{% url 'Cliente:loginapp' %}" class="btn btn-outline-primary w-100">Iniciar Sesion</a>
                   {% endif %}
                 </div>
