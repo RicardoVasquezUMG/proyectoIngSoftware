@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Categoria, Cliente
+from .models import Categoria, Cliente, Producto
 
 
 class ClienteForm(UserCreationForm):
@@ -29,3 +29,8 @@ class CategoriaForm(forms.ModelForm):
     class Meta:
         model = Categoria
         fields = ['nombre']
+
+class ProductoForm(forms.ModelForm):
+    class Meta:
+        model = Producto        
+        exclude = ['creacion'] 
