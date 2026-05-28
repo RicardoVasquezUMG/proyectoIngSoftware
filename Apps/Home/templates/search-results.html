@@ -17,7 +17,7 @@
                       <img src="{{ producto.imagen }}" class="hover-image img-fluid" alt="{{ producto.nombre }}">
                       <div class="product-overlay">
                         <div class="product-actions">
-                            <a href="{#}" class="action-btn" data-bs-toggle="tooltip" title="Quick View">
+                            <a href="{% url 'Cliente:detalle_producto' producto.id %}" class="action-btn" data-bs-toggle="tooltip" title="Quick View">
                             <i class="bi bi-eye"></i>
                             </a>
                          

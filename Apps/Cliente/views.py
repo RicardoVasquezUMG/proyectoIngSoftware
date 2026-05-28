@@ -33,3 +33,16 @@ class ListadoView(TemplateView):
 			context['productos'] = Producto.objects.all()
 		context['categorias'] = Categoria.objects.all()
 		return context
+	
+class DetalleProductoView(TemplateView):
+	template_name = 'detalle_producto.html'
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		producto_id = self.kwargs.get('producto_id')
+		try:
+			producto = Producto.objects.get(id=producto_id)
+			context['producto'] = producto
+		except Producto.DoesNotExist:
+			context['error_message'] = 'Producto no encontrado.'
+		return context
