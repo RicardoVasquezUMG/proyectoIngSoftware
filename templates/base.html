@@ -47,7 +47,7 @@
           </a>
 
           <!-- Search -->
-          <form class="search-form desktop-search-form" method="get" action="{#}">
+          <form class="search-form desktop-search-form" method="get" action="{% url 'Home:search_results' %}">
             <div class="input-group">
               <input type="text" class="form-control" name="dato" placeholder="Buscar  producto" value="{{ request.GET.dato }}">
               <button class="btn" type="submit">
@@ -140,7 +140,7 @@
         <nav id="navmenu" class="navmenu">
           <ul>
             <li><a href={% url 'Home:homeapp' %}>Inicio</a></li>
-            <li><a href={#}>Categorías</a></li>
+            <li><a href={% url 'Cliente:listadoProductos' %}>Categorías</a></li>
             <li><a href={% url 'Home:acerca_app' %}>Acerca de </a></li>
             <li><a href={% url 'Home:soporte_app' %}>Soporte</a></li>
             
@@ -155,7 +155,7 @@
     <!-- Mobile Search Form -->
     <div class="collapse" id="mobileSearch">
       <div class="container">
-        <form class="search-form">
+        <form class="search-form" method="get" action="{% url 'Home:search_results' %}">
           <div class="input-group">
             <input type="text" class="form-control" placeholder="Search for products">
             <button class="btn" type="submit">

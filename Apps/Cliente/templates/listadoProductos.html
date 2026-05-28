@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+<div class="page-title light-background">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+      <h1 class="mb-2 mb-lg-0">Listado de Productos</h1>
+      <nav class="breadcrumbs">
+        <ol>
+          <li><a href={% url 'Home:homeapp' %}>Inicio</a></li>
+          <li class="current">Listado de Productos</li>
+        </ol>
+      </nav>
+    </div>
+</div><!-- End Page Title -->
+
+  <main class="main">
+    <div class="container">
+      <div class="row">
+
+        <div class="col-lg-3 sidebar">
+
+          <div class="widgets-container">
+
+            <!-- Product Categories Widget -->
+            <div class="product-categories-widget widget-item">
+              <h3 class="widget-title">Categorias</h3>
+              <ul class="category-tree list-unstyled mb-0">
+                <li class="category-item">
+                  <div class="d-flex justify-content-between align-items-center category-header">
+                    <a href="?" class="category-link">Todos</a>
+                  </div>
+                </li>
+                {% for categoria in categorias %}
+                <li class="category-item">
+                  <div class="d-flex justify-content-between align-items-center category-header">
+                    <a href="?categoria={{ categoria.id }}" class="category-link">{{ categoria.nombre }}</a>
+                  </div>
+                </li>
+                {% empty %}
+                <li class="category-item">
+                  <span class="text-muted">No hay categorías disponibles.</span>
+                </li>
+                {% endfor %}
+              </ul>
+            </div><!--/Product Categories Widget -->
+
+          </div>
+
+        </div>
+
+        <div class="col-lg-8">
+          <!-- Category Product List Section -->
+          <br>
+          <section id="category-product-list" class="category-product-list section">
+            <div class="container" data-aos="fade-up" data-aos-delay="100">
+              {% if request.GET.categoria %}
+                {% for cat in categorias %}
+                  {% if cat.id|stringformat:"s" == request.GET.categoria %}
+                    <h5 class="mb-4">Filtrando por categoría: <strong>{{ cat.nombre }}</strong></h5>
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+                <h5 class="mb-4">Mostrando todos los productos</h5>
+              {% endif %}
+              <div class="row g-4">
+                {% for producto in productos %}
+                <div class="col-6 col-xl-4">
+                  <div class="product-card  border border-2 border-light-subtle rounded-6" data-aos="zoom-in">
+                    <div class="product-image">
+                      <img src="{{ producto.imagen }}" class="main-image img-fluid" alt="{{ producto.nombre }}">
+                      <img src="{{ producto.imagen }}" class="hover-image img-fluid" alt="{{ producto.nombre }}">
+                      <div class="product-overlay">
+                        <div class="product-actions">
+                            <a href="{#}" class="action-btn" data-bs-toggle="tooltip" title="Quick View">
+                            <i class="bi bi-eye"></i>
+                            </a>
+                          <form action="{#}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="cantidad" value="1">
+                            <button type="submit" class="action-btn" data-bs-toggle="tooltip" title="Add to Cart">
+                              <i class="bi bi-cart-plus"></i>
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="product-details">
+                      <div class="product-category">{{ producto.descripcion|truncatechars:20 }}</div>
+                      <h4 class="product-title">{{ producto.nombre }}</h4>
+                      <div class="product-meta">
+                        <div class="product-price">Q{{ producto.precio }}</div>
+                        <!-- Aquí podrías agregar rating si lo tienes en el modelo -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% empty %}
+                <p>No hay productos disponibles.</p>
+                {% endfor %}
+              </div>
+
+            </div>
+
+          </section><!-- /Category Product List Section -->
+
+          
+
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+{% endblock %}

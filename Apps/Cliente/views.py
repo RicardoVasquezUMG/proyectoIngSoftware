@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView
 from .forms import ClienteForm
-from .models import Cliente
+from .models import Categoria, Cliente, Producto
 
 # Create your views here.
 class RegistroView(CreateView):
@@ -19,3 +19,17 @@ class LoginView(LoginView):
 
 	def form_invalid(self, form):
 		return self.render_to_response(self.get_context_data(form=form, error_message="Usuario o contraseña incorrectos."))
+
+
+class ListadoView(TemplateView):
+	template_name = 'listadoProductos.html'
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		categoria_id = self.request.GET.get('categoria')
+		if categoria_id:
+			context['productos'] = Producto.objects.filter(categoria_id=categoria_id)
+		else:
+			context['productos'] = Producto.objects.all()
+		context['categorias'] = Categoria.objects.all()
+		return context
