@@ -113,8 +113,8 @@
                       <button type="submit" class="btn btn-danger w-100">Cerrar Sesión</button>
                     </form>
                   {% else %}
-                    <a href="{#}" class="btn btn-primary w-100 mb-2">Registrar</a>
-                    <a href="{#}" class="btn btn-outline-primary w-100">Iniciar Sesion</a>
+                    <a href="{% url 'Cliente:loginapp' %}" class="btn btn-primary w-100 mb-2">Registrar</a>
+                    <a href="{% url 'Cliente:loginapp' %}" class="btn btn-outline-primary w-100">Iniciar Sesion</a>
                   {% endif %}
                 </div>
               </div>
