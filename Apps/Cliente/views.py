@@ -46,3 +46,28 @@ class DetalleProductoView(TemplateView):
 		except Producto.DoesNotExist:
 			context['error_message'] = 'Producto no encontrado.'
 		return context
+	
+
+class CarritoView(TemplateView):
+	template_name = 'carrito.html'
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		carrito = self.request.session.get('carrito', {})
+		productos = []
+		total = 0
+		for key, item in carrito.items():
+			producto_id = item.get('id') or key
+			subtotal = item['precio'] * item['cantidad']
+			total += subtotal
+			productos.append({
+				'id': producto_id,
+				'nombre': item['nombre'],
+				'precio': item['precio'],
+				'cantidad': item['cantidad'],
+				'imagen': item.get('imagen', ''),
+				'subtotal': subtotal
+			})
+		context['productos'] = productos
+		context['total'] = total
+		return context
