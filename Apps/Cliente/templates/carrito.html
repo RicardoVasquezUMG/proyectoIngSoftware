@@ -64,7 +64,7 @@
                     </div>
                     <div class="col-lg-2 col-12 mt-3 mt-lg-0 text-center">
                       <div class="quantity-selector d-flex justify-content-center align-items-center">
-                        <form action="{#}" method="post" style="display:inline;">
+                        <form action="{% url 'Cliente:carrito_quitar' producto.id %}" method="post" style="display:inline;">
                           {% csrf_token %}
                           <input type="hidden" name="cantidad" value="{{ producto.cantidad|add:'-1' }}">
                           <button type="submit" class="quantity-btn decrease btn btn-light" title="Restar">
@@ -72,7 +72,7 @@
                           </button>
                         </form>
                         <input type="number" class="quantity-input" value="{{ producto.cantidad }}" min="1" readonly>
-                        <form action="{#}" method="post" style="display:inline;">
+                        <form action="{% url 'Cliente:carrito_agregar' producto.id %}" method="post" style="display:inline;">
                           {% csrf_token %}
                           <input type="hidden" name="cantidad" value="1">
                           <button type="submit" class="quantity-btn increase btn btn-light" title="Sumar">

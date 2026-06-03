@@ -74,7 +74,7 @@
                             <a href="{% url 'Cliente:detalle_producto' producto.id %}" class="action-btn" data-bs-toggle="tooltip" title="Quick View">
                             <i class="bi bi-eye"></i>
                             </a>
-                          <form action="{#}" method="post" style="display:inline;">
+                          <form action="{% url 'Cliente:carrito_agregar' producto.id %}" method="post" style="display:inline;">
                             {% csrf_token %}
                             <input type="hidden" name="cantidad" value="1">
                             <button type="submit" class="action-btn" data-bs-toggle="tooltip" title="Add to Cart">

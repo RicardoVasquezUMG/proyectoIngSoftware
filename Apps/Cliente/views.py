@@ -5,6 +5,8 @@ from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView
 from .forms import ClienteForm
 from .models import Categoria, Cliente, Producto
+from django.views.decorators.http import require_POST
+from django.shortcuts import redirect
 
 # Create your views here.
 class RegistroView(CreateView):
@@ -71,3 +73,50 @@ class CarritoView(TemplateView):
 		context['productos'] = productos
 		context['total'] = total
 		return context
+	
+
+@require_POST
+def agregar_al_carrito(request, producto_id):
+	producto = Producto.objects.get(id=producto_id)
+	carrito = request.session.get('carrito', {})
+	cantidad = int(request.POST.get('cantidad', 1))
+	if cantidad <= 0:
+		return redirect('Cliente:carrito')
+	if str(producto_id) in carrito:
+		carrito[str(producto_id)]['cantidad'] += cantidad
+	else:
+		carrito[str(producto_id)] = {
+			'id': producto.id,
+			'nombre': producto.nombre,
+			'precio': float(producto.precio),
+			'cantidad': cantidad,
+			'imagen': producto.imagen,
+			'color': getattr(producto, 'color', ''),
+			'size': getattr(producto, 'size', '')
+		}
+	# Actualizar la cantidad total de productos en el carrito
+	carrito_cantidad = sum(item['cantidad'] for item in carrito.values())
+	request.session['carrito'] = carrito
+	request.session['carrito_cantidad'] = carrito_cantidad
+	request.session.modified = True
+	return redirect('Cliente:carrito')
+
+@require_POST
+def quitar_del_carrito(request, producto_id):
+	carrito = request.session.get('carrito', {})
+	producto_key = str(producto_id)
+	if producto_key in carrito:
+		if request.POST.get('delete') == '1':
+			carrito.pop(producto_key, None)
+		else:
+			nueva_cantidad = int(request.POST.get('cantidad', carrito[producto_key]['cantidad'] - 1))
+			if nueva_cantidad <= 0:
+				carrito.pop(producto_key, None)
+			else:
+				carrito[producto_key]['cantidad'] = nueva_cantidad
+	# Actualizar la cantidad total de productos en el carrito
+	carrito_cantidad = sum(item['cantidad'] for item in carrito.values())
+	request.session['carrito'] = carrito
+	request.session['carrito_cantidad'] = carrito_cantidad
+	request.session.modified = True
+	return redirect('Cliente:carrito')

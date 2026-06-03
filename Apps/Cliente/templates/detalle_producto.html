@@ -75,7 +75,7 @@
                 </div>
 
                 <div class="action-buttons">
-                  <form action="{#}" method="post" style="display:inline;">
+                  <form action="{% url 'Cliente:carrito_agregar' producto.id %}" method="post" style="display:inline;">
                     {% csrf_token %}
                     <input type="hidden" name="cantidad" id="cantidad-input" value="1">
                     <button type="submit" class="btn primary-action">
