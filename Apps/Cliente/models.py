@@ -25,3 +25,19 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.nombre  
+    
+class Direccion(models.Model):
+    entrega_CHOICES = [
+        ('Encontrarse', 'Encontrarse'),
+        ('Dejar en puerta', 'Dejar en puerta'),
+    ]
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    direccion_linea1 = models.CharField(max_length=255)
+    direccion_linea2 = models.CharField(max_length=255, blank=True, null=True)
+    Colonia = models.CharField(max_length=100)
+    telefono = models.CharField(max_length=100)
+    etiqueta = models.CharField(max_length=50, blank=True, null=True)
+    entrega = models.CharField(max_length=50, choices=entrega_CHOICES, default='Encontrarse')
+
+    def __str__(self):
+        return f"{self.direccion_linea1}, {self.Colonia}, {self.telefono}"

@@ -1,0 +1,50 @@
+{% extends 'perfil.html' %}
+{% load static %}
+
+{% block perfil_contenido %}
+<main class="main">
+    <div class="section-header" data-aos="fade-up">
+        <h2>Mis Direcciones</h2>
+        <div class="header-actions">
+            <a href="{% url 'Cliente:crear_direccion' %}" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i>
+                Agregar Nueva Dirección
+            </a>
+        </div>
+    </div>
+
+    <div class="addresses-grid">
+        {% for direccion in direcciones %}
+    <div class="address-card{% if forloop.first %} default{% endif %}" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:"00" }}">
+            <div class="card-header">
+                <h4>{{ direccion.etiqueta|default:"Dirección" }}</h4>
+            </div>
+            <div class="card-body">
+                <p class="address-text">
+                    {{ direccion.direccion_linea1 }}<br>
+                    {% if direccion.direccion_linea2 %}{{ direccion.direccion_linea2 }}<br>{% endif %}
+                    {{ direccion.Colonia }}<br>
+                </p>
+                <div class="contact-info">
+                    <div><i class="bi bi-person"></i> {{ direccion.cliente.perfil.get_full_name|default:direccion.cliente.perfil.username }}</div>
+                    <div><i class="bi bi-telephone"></i> {{ direccion.telefono }}</div>
+                </div>
+            </div>
+                <div class="card-actions">
+                    <a href="{% url 'Cliente:editar_direccion' direccion.pk %}" class="btn btn-warning btn-edit">
+                        <i class="bi bi-pencil"></i>
+                        Editar
+                    </a>
+                    <a href="{% url 'Cliente:eliminar_direccion' direccion.pk %}" class="btn btn-danger btn-remove">
+                        <i class="bi bi-trash"></i>
+                        Eliminar
+                    </a>
+                </div>
+        </div>
+        {% empty %}
+        <p>No tienes direcciones registradas.</p>
+        {% endfor %}
+    </div>
+</main>
+
+{% endblock %}

@@ -3,10 +3,18 @@ from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView
-from .forms import ClienteForm
+from .forms import ClienteForm, ClienteUpdateForm
+from django.contrib.auth.models import User
+from django.db import transaction
 from .models import Categoria, Cliente, Producto
 from django.views.decorators.http import require_POST
 from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from .models import Direccion
+from .forms import DireccionForm
+from django.views.generic import UpdateView, DeleteView
+from django.contrib import messages
 
 # Create your views here.
 class RegistroView(CreateView):
@@ -120,3 +128,133 @@ def quitar_del_carrito(request, producto_id):
 	request.session['carrito_cantidad'] = carrito_cantidad
 	request.session.modified = True
 	return redirect('Cliente:carrito')
+
+
+class PerfilView(TemplateView):
+	template_name = 'perfil.html'
+
+	@method_decorator(login_required)
+	def dispatch(self, *args, **kwargs):
+		return super().dispatch(*args, **kwargs)
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		try:
+			cliente = Cliente.objects.get(perfil=self.request.user)
+			context['cliente'] = cliente
+		except Cliente.DoesNotExist:
+			context['error_message'] = "No se encontró al usuario."
+		return context
+	
+class EditarPerfilView(UpdateView):
+	model = User
+	form_class = ClienteUpdateForm
+	template_name = 'editar_perfil.html'
+	success_url = reverse_lazy('Cliente:perfil')
+
+	@method_decorator(login_required)
+	def dispatch(self, *args, **kwargs):
+		return super().dispatch(*args, **kwargs)
+
+	def get_object(self, queryset=None):
+		return self.request.user
+
+	def form_valid(self, form):
+		# Guardar User y Cliente en una transacción atómica
+		with transaction.atomic():
+			response = super().form_valid(form)
+		messages.success(self.request, "Perfil actualizado correctamente.")
+		return response
+
+class DireccionesCRUDView(TemplateView):
+	template_name = 'direccionesCRUD.html'
+
+	@method_decorator(login_required)
+	def dispatch(self, *args, **kwargs):
+		return super().dispatch(*args, **kwargs)
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		try:
+			cliente = Cliente.objects.get(perfil=self.request.user)
+			context['cliente'] = cliente
+			context['direcciones'] = Direccion.objects.filter(cliente=cliente)
+		except Cliente.DoesNotExist:
+			context['error_message'] = "No se encontró el cliente asociado al usuario."
+		return context
+	
+
+class CrearDireccionView(CreateView):
+	# Implementación para crear una nueva dirección
+	model = Direccion
+	form_class = DireccionForm
+	template_name = 'direccionesCrear.html'
+	success_url = reverse_lazy('Cliente:direcciones')
+
+	def form_valid(self, form):
+		direccion = form.save(commit=False)
+		try:
+			cliente = Cliente.objects.get(perfil=self.request.user)
+			direccion.cliente = cliente
+		except Cliente.DoesNotExist:
+			messages.error(self.request, "No se encontró el cliente asociado al usuario.")
+			return redirect('Cliente:loginapp')
+		direccion.save()
+		messages.success(self.request, "Dirección creada exitosamente.")
+		return redirect(self.success_url)
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		try:
+			cliente = Cliente.objects.get(perfil=self.request.user)
+			context['cliente'] = cliente
+		except Cliente.DoesNotExist:
+			context['cliente'] = None
+		return context
+	
+# Vista para editar dirección
+class EditarDireccionView(UpdateView):
+		model = Direccion
+		form_class = DireccionForm
+		template_name = 'editar_direccion.html'
+		success_url = reverse_lazy('Cliente:direcciones')
+
+		def get_context_data(self, **kwargs):
+			context = super().get_context_data(**kwargs)
+			try:
+				cliente = Cliente.objects.get(perfil=self.request.user)
+				context['cliente'] = cliente
+			except Cliente.DoesNotExist:
+				context['cliente'] = None
+			return context
+
+		def form_valid(self, form):
+			direccion = form.save(commit=False)
+			try:
+				cliente = Cliente.objects.get(perfil=self.request.user)
+				direccion.cliente = cliente
+			except Cliente.DoesNotExist:
+				messages.error(self.request, "No se encontró el cliente asociado al usuario.")
+				return redirect('Cliente:loginapp')
+			direccion.save()
+			messages.success(self.request, "Dirección editada exitosamente.")
+			return redirect(self.success_url)
+
+# Vista para eliminar dirección
+class EliminarDireccionView(DeleteView):
+	model = Direccion
+	template_name = 'eliminar_direccion.html'
+	success_url = reverse_lazy('Cliente:direcciones')
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		try:
+			cliente = Cliente.objects.get(perfil=self.request.user)
+			context['cliente'] = cliente
+		except Cliente.DoesNotExist:
+			context['cliente'] = None
+		return context
+
+	def delete(self, request, *args, **kwargs):
+		messages.success(self.request, "Dirección eliminada exitosamente.")
+		return super().delete(request, *args, **kwargs)

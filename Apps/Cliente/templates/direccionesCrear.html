@@ -1,0 +1,14 @@
+{% extends 'perfil.html' %}
+{% load static %}
+
+{% block perfil_contenido %}
+<div class="container mt-4">
+    <h2>Agregar Nueva Dirección</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Guardar Dirección</button>
+        <a href="{% url 'Cliente:direcciones' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}
