@@ -330,3 +330,14 @@ class OrdenesVerView(TemplateView):
 		except Pedido.DoesNotExist:
 			context['error_message'] = 'Pedido no encontrado.'
 		return context
+
+
+class OrdenesView(TemplateView):
+	template_name = 'ordenesGeneral.html'
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		cliente = Cliente.objects.get(perfil=self.request.user)
+		pedidos = Pedido.objects.filter(cliente=cliente).order_by('-fecha')
+		context['pedidos'] = pedidos
+		return context

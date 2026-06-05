@@ -26,7 +26,7 @@
                         <tr>
                             <td>{{ pedido.id }}</td>
                             <td>{{ pedido.cliente.perfil.get_full_name|default:pedido.cliente.perfil.username }}</td>
-                            <td>{{ pedido.fecha }}</td>
+                            <td>{{ pedido.fecha|date:"d/m/Y" }}</td>
                             <td>{{ pedido.estado }}</td>
                             <td>{% if pedido.direccion_envio %}{{ pedido.direccion_envio }}{% else %}Retiro en tienda{% endif %}</td>
                             <td>{{ pedido.comentarios }}</td>
