@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block contenido %}
+<main class="main">
+    <div class="section-header" data-aos="fade-up">
+        <h2>Pedidos</h2>
+    </div>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-bordered" style="background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                    <thead>
+                        <tr>
+                            <th style="background:#111; color:#fff;">ID</th>
+                            <th style="background:#111; color:#fff;">Cliente</th>
+                            <th style="background:#111; color:#fff;">Fecha</th>
+                            <th style="background:#111; color:#fff;">Estado</th>
+                            <th style="background:#111; color:#fff;">Dirección</th>
+                            <th style="background:#111; color:#fff;">Comentarios</th>
+                            <th style="background:#111; color:#fff;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pedido in pedidos %}
+                        <tr>
+                            <td>{{ pedido.id }}</td>
+                            <td>{{ pedido.cliente.perfil.get_full_name|default:pedido.cliente.perfil.username }}</td>
+                            <td>{{ pedido.fecha }}</td>
+                            <td>{{ pedido.estado }}</td>
+                            <td>{% if pedido.direccion_envio %}{{ pedido.direccion_envio }}{% else %}Retiro en tienda{% endif %}</td>
+                            <td>{{ pedido.comentarios }}</td>
+                            <td>
+                                <a href="{% url 'Cliente:ordenes_ver' pedido.id %}" class="btn btn-outline-secondary btn-sm" style="border-radius: 4px; border: 1px solid #bbb; background: none; color: #333;">Ver</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="6">No hay pedidos registrados.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+               
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

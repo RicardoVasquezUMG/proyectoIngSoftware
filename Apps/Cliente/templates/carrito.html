@@ -125,7 +125,7 @@
               </div>
                 {% if request.user.is_authenticated %}
                 <div class="checkout-button">
-                  <a href="{#}" class="btn btn-accent w-100">
+                  <a href="{% url 'Cliente:formulario_pedido' %}" class="btn btn-accent w-100">
                     Continuar pedido <i class="bi bi-arrow-right"></i>
                   </a>
                 </div>

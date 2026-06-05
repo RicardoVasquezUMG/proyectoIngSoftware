@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView
 from .forms import ClienteForm, ClienteUpdateForm
@@ -15,6 +15,7 @@ from .models import Direccion
 from .forms import DireccionForm
 from django.views.generic import UpdateView, DeleteView
 from django.contrib import messages
+from Apps.Negocio.models import Pedido, PedidoDetalle
 
 # Create your views here.
 class RegistroView(CreateView):
@@ -258,3 +259,74 @@ class EliminarDireccionView(DeleteView):
 	def delete(self, request, *args, **kwargs):
 		messages.success(self.request, "Dirección eliminada exitosamente.")
 		return super().delete(request, *args, **kwargs)
+	
+
+@login_required
+def formulario_pedido(request):
+	cliente = Cliente.objects.get(perfil=request.user)
+	direcciones = Direccion.objects.filter(cliente=cliente)
+	carrito = request.session.get('carrito', {})
+	productos = []
+	total = 0
+	for key, item in carrito.items():
+		subtotal = item['precio'] * item['cantidad']
+		total += subtotal
+		productos.append(item)
+
+	if request.method == 'POST':
+		retiro_tienda = request.POST.get('retiro_tienda') == 'true'
+		direccion_id = request.POST.get('direccion') if not retiro_tienda else None
+		comentario = request.POST.get('comentario', '')
+		direccion_obj = Direccion.objects.get(id=direccion_id) if direccion_id else None
+		pedido = Pedido.objects.create(
+			cliente=cliente,
+			envio=not retiro_tienda,
+			estado='pendiente',
+			direccion_envio=direccion_obj,
+			comentarios=comentario
+		)
+		for item in productos:
+			producto_obj = Producto.objects.get(id=item['id'])
+			PedidoDetalle.objects.create(
+				pedido=pedido,
+				producto=producto_obj,
+				cantidad=item['cantidad']
+			)
+		# Limpiar carrito
+		request.session['carrito'] = {}
+		request.session['carrito_cantidad'] = 0
+		request.session.modified = True
+		return redirect(reverse('Cliente:ordenes_ver', args=[pedido.id]))
+
+	return render(request, 'pedido_formulario.html', {
+		'direcciones': direcciones,
+		'productos': productos,
+		'total': total
+	})
+
+	
+
+class OrdenesVerView(TemplateView):
+	template_name = 'ordenesVer.html'
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		pedido_id = self.kwargs.get('pedido_id')
+		try:
+			pedido = Pedido.objects.get(id=pedido_id)
+			detalles = PedidoDetalle.objects.filter(pedido=pedido)
+			subtotal = sum(float(d.producto.precio) * d.cantidad for d in detalles)
+			if pedido.envio:
+				envio = 0 if subtotal > 75 else 25
+			else:
+				envio = 0
+			total = subtotal + envio
+			context['pedido'] = pedido
+			context['detalles'] = detalles
+			context['cliente'] = pedido.cliente
+			context['subtotal'] = subtotal
+			context['envio'] = envio
+			context['total'] = total
+		except Pedido.DoesNotExist:
+			context['error_message'] = 'Pedido no encontrado.'
+		return context

@@ -4,7 +4,7 @@ from django.contrib.auth.views import LogoutView
 from Apps.Cliente.views import DetalleProductoView, ListadoView, LoginView, RegistroView, CarritoView
 from Apps.Cliente.views import agregar_al_carrito, quitar_del_carrito
 from Apps.Cliente.views import PerfilView, DireccionesCRUDView, CrearDireccionView, EditarDireccionView, EliminarDireccionView
-from Apps.Cliente.views import EditarPerfilView
+from Apps.Cliente.views import EditarPerfilView , formulario_pedido, OrdenesVerView
 
 
 app_name = 'Cliente'
@@ -23,4 +23,6 @@ urlpatterns = [
     path('direcciones/crear/', CrearDireccionView.as_view(), name='crear_direccion'),
     path('direcciones/<int:pk>/editar/', EditarDireccionView.as_view(), name='editar_direccion'),
     path('direcciones/<int:pk>/eliminar/', EliminarDireccionView.as_view(), name='eliminar_direccion'),
+    path('pedido/formulario/', formulario_pedido, name='formulario_pedido'),
+    path('ordenes/<int:pedido_id>/', OrdenesVerView.as_view(), name='ordenes_ver'),
 ]
