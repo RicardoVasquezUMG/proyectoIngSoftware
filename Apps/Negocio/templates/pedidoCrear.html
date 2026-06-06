@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+<main class="main">
+    <div class="container mt-4">
+        <h2>Crear Pedido</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success">Crear Pedido</button>
+            <a href="{% url 'Negocio:pedido_crud' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</main>
+{% endblock %}
