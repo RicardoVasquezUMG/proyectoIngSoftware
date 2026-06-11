@@ -6,9 +6,10 @@ from django.contrib.auth.views import LoginView
 from .forms import ClienteForm, ClienteUpdateForm
 from django.contrib.auth.models import User
 from django.db import transaction
+from decimal import Decimal
 from .models import Categoria, Cliente, Producto
 from django.views.decorators.http import require_POST
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from .models import Direccion
@@ -16,6 +17,39 @@ from .forms import DireccionForm
 from django.views.generic import UpdateView, DeleteView
 from django.contrib import messages
 from Apps.Negocio.models import Pedido, PedidoDetalle
+
+
+def construir_items_carrito(carrito):
+	productos = []
+	total = Decimal('0.00')
+
+	for key, item in carrito.items():
+		producto_id = item.get('id') or key
+		try:
+			producto = Producto.objects.get(id=producto_id)
+		except Producto.DoesNotExist:
+			continue
+
+		cantidad = int(item.get('cantidad', 1))
+		precio_original = producto.precio
+		oferta = producto.oferta_activa
+		precio_actual = producto.precio_efectivo
+		subtotal = precio_actual * cantidad
+		total += subtotal
+
+		productos.append({
+			'id': producto.id,
+			'nombre': producto.nombre,
+			'precio': precio_actual,
+			'precio_original': precio_original,
+			'cantidad': cantidad,
+			'imagen': producto.imagen,
+			'subtotal': subtotal,
+			'tiene_oferta': producto.tiene_oferta,
+			'descuento': oferta.descuento if oferta else None,
+		})
+
+	return productos, total
 
 # Create your views here.
 class RegistroView(CreateView):
@@ -65,20 +99,7 @@ class CarritoView(TemplateView):
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
 		carrito = self.request.session.get('carrito', {})
-		productos = []
-		total = 0
-		for key, item in carrito.items():
-			producto_id = item.get('id') or key
-			subtotal = item['precio'] * item['cantidad']
-			total += subtotal
-			productos.append({
-				'id': producto_id,
-				'nombre': item['nombre'],
-				'precio': item['precio'],
-				'cantidad': item['cantidad'],
-				'imagen': item.get('imagen', ''),
-				'subtotal': subtotal
-			})
+		productos, total = construir_items_carrito(carrito)
 		context['productos'] = productos
 		context['total'] = total
 		return context
@@ -86,7 +107,7 @@ class CarritoView(TemplateView):
 
 @require_POST
 def agregar_al_carrito(request, producto_id):
-	producto = Producto.objects.get(id=producto_id)
+	producto = get_object_or_404(Producto, id=producto_id)
 	carrito = request.session.get('carrito', {})
 	cantidad = int(request.POST.get('cantidad', 1))
 	if cantidad <= 0:
@@ -97,7 +118,6 @@ def agregar_al_carrito(request, producto_id):
 		carrito[str(producto_id)] = {
 			'id': producto.id,
 			'nombre': producto.nombre,
-			'precio': float(producto.precio),
 			'cantidad': cantidad,
 			'imagen': producto.imagen,
 			'color': getattr(producto, 'color', ''),
@@ -266,12 +286,7 @@ def formulario_pedido(request):
 	cliente = Cliente.objects.get(perfil=request.user)
 	direcciones = Direccion.objects.filter(cliente=cliente)
 	carrito = request.session.get('carrito', {})
-	productos = []
-	total = 0
-	for key, item in carrito.items():
-		subtotal = item['precio'] * item['cantidad']
-		total += subtotal
-		productos.append(item)
+	productos, total = construir_items_carrito(carrito)
 
 	if request.method == 'POST':
 		retiro_tienda = request.POST.get('retiro_tienda') == 'true'
@@ -290,7 +305,8 @@ def formulario_pedido(request):
 			PedidoDetalle.objects.create(
 				pedido=pedido,
 				producto=producto_obj,
-				cantidad=item['cantidad']
+				cantidad=item['cantidad'],
+				precio_unitario=producto_obj.precio_efectivo
 			)
 		# Limpiar carrito
 		request.session['carrito'] = {}
@@ -315,7 +331,9 @@ class OrdenesVerView(TemplateView):
 		try:
 			pedido = Pedido.objects.get(id=pedido_id)
 			detalles = PedidoDetalle.objects.filter(pedido=pedido)
-			subtotal = sum(float(d.producto.precio) * d.cantidad for d in detalles)
+			subtotal = Decimal('0.00')
+			for detalle in detalles:
+				subtotal += (detalle.precio_unitario or detalle.producto.precio) * detalle.cantidad
 			if pedido.envio:
 				envio = 0 if subtotal > 75 else 25
 			else:

@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, CreateView, UpdateView, View
 from django.urls import reverse_lazy
-
 from django.shortcuts import get_object_or_404, redirect
 from Apps.Cliente.models import Categoria , Producto
 from Apps.Cliente.forms import CategoriaForm, ProductoForm
-from .models import Pedido, PedidoDetalle
+from .models import Pedido, PedidoDetalle, Oferta, ProductoOferta
 from django.forms import modelformset_factory
 from django import forms
+from .forms import OfertaForm
+from decimal import Decimal
 
 
 # Create your views here.
@@ -108,7 +109,9 @@ class PedidoView(TemplateView):
         pedido_id = self.kwargs.get('pk')
         pedido = get_object_or_404(Pedido, pk=pedido_id)
         detalles = PedidoDetalle.objects.filter(pedido=pedido)
-        subtotal = sum(float(d.producto.precio) * d.cantidad for d in detalles)
+        subtotal = Decimal('0.00')
+        for detalle in detalles:
+            subtotal += (detalle.precio_unitario or detalle.producto.precio) * detalle.cantidad
         if pedido.envio:
             envio = 0 if subtotal > 75 else 25
         else:
@@ -121,6 +124,7 @@ class PedidoView(TemplateView):
         context['total'] = total
         context['cliente'] = pedido.cliente
         return context
+
 
 # Editar pedido
 
@@ -174,3 +178,50 @@ class PedidoEliminarView(View):
         pedido = get_object_or_404(Pedido, pk=pk)
         pedido.delete()
         return redirect('Negocio:pedido_crud')
+
+class OfertaCRUDView(TemplateView):
+    template_name = 'oferta_crud.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['ofertas'] = Oferta.objects.prefetch_related('productos').order_by('-inicio')
+        return context
+
+
+def guardar_productos_oferta(oferta, productos):
+    ProductoOferta.objects.filter(oferta=oferta).delete()
+    ProductoOferta.objects.bulk_create(
+        [ProductoOferta(oferta=oferta, producto=producto) for producto in productos]
+    )
+
+
+class OfertaCrearView(CreateView):
+    model = Oferta
+    form_class = OfertaForm
+    template_name = 'ofertaCrear.html'
+    success_url = reverse_lazy('Negocio:oferta_crud')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        guardar_productos_oferta(self.object, form.cleaned_data.get('productos', []))
+        return response
+
+
+class OfertaEditarView(UpdateView):
+    model = Oferta
+    form_class = OfertaForm
+    template_name = 'ofertaEditar.html'
+    success_url = reverse_lazy('Negocio:oferta_crud')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        guardar_productos_oferta(self.object, form.cleaned_data.get('productos', []))
+        return response
+
+
+class OfertaEliminarView(View):
+    def post(self, request, pk, *args, **kwargs):
+        oferta = get_object_or_404(Oferta, pk=pk)
+        oferta.delete()
+        return redirect('Negocio:oferta_crud')
+

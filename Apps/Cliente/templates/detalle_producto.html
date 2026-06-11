@@ -42,14 +42,21 @@
             <div class="product-details">
               <div class="product-badge-container">
                 <span class="badge-category">{{ producto.categoria.nombre }}</span>
-                
+                {% if producto.tiene_oferta %}
+                  <span class="badge bg-danger">-{{ producto.oferta_activa.descuento }}%</span>
+                {% endif %}
               </div>
 
               <h1 class="product-name">{{ producto.nombre }}</h1>
 
               <div class="pricing-section">
                 <div class="price-display">
-                  <span class="sale-price">Q{{ producto.precio }}</span>
+                  {% if producto.tiene_oferta %}
+                    <span class="sale-price">Q{{ producto.precio_efectivo }}</span>
+                    <span class="text-muted text-decoration-line-through ms-3">Q{{ producto.precio }}</span>
+                  {% else %}
+                    <span class="sale-price">Q{{ producto.precio }}</span>
+                  {% endif %}
                 </div>
               </div>
 

@@ -121,7 +121,7 @@
                     </div>
                     <div class="item-price">
                       <span class="quantity">{{ detalle.cantidad }} ×</span>
-                      <span class="price">Q {{ detalle.producto.precio }}</span>
+                      <span class="price">Q {{ detalle.precio_unitario|default:detalle.producto.precio_efectivo }}</span>
                     </div>
                   </div>
                 </div>

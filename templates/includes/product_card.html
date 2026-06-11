@@ -1,0 +1,38 @@
+{% load static %}
+<div class="product-card border border-2 border-light-subtle rounded-6 h-100" data-aos="zoom-in">
+  <div class="product-image">
+    <img src="{{ producto.imagen }}" class="main-image img-fluid" alt="{{ producto.nombre }}">
+    <img src="{{ producto.imagen }}" class="hover-image img-fluid" alt="{{ producto.nombre }}">
+    {% if producto.tiene_oferta %}
+      <span class="badge bg-danger position-absolute top-0 start-0 m-3">-{{ producto.oferta_activa.descuento }}%</span>
+    {% endif %}
+    <div class="product-overlay">
+      <div class="product-actions">
+        <a href="{% url 'Cliente:detalle_producto' producto.id %}" class="action-btn" data-bs-toggle="tooltip" title="Quick View">
+          <i class="bi bi-eye"></i>
+        </a>
+        <form action="{% url 'Cliente:carrito_agregar' producto.id %}" method="post" style="display:inline;">
+          {% csrf_token %}
+          <input type="hidden" name="cantidad" value="1">
+          <button type="submit" class="action-btn" data-bs-toggle="tooltip" title="Add to Cart">
+            <i class="bi bi-cart-plus"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="product-details">
+    <div class="product-category">{{ producto.descripcion|truncatechars:20 }}</div>
+    <h4 class="product-title">{{ producto.nombre }}</h4>
+    <div class="product-meta">
+      {% if producto.tiene_oferta %}
+        <div class="product-price">
+          <span class="text-muted text-decoration-line-through me-2">Q{{ producto.precio }}</span>
+          <span class="text-success fw-bold">Q{{ producto.precio_efectivo }}</span>
+        </div>
+      {% else %}
+        <div class="product-price">Q{{ producto.precio }}</div>
+      {% endif %}
+    </div>
+  </div>
+</div>

@@ -3,6 +3,7 @@ from django.urls import include, path
 from .views import CategoriaCRUDView, CategoriaCrearView, CategoriaEditarView, CategoriaEliminarView, PedidoEliminarView
 from .views import ProductoCRUDView, ProductoCrearView, ProductoEditarView, ProductoEliminarView, ProductoView
 from .views import PedidoCRUDView, PedidoEditarView, PedidoView
+from .views import OfertaCRUDView, OfertaCrearView, OfertaEditarView, OfertaEliminarView
 
 
 
@@ -21,4 +22,8 @@ urlpatterns = [
     path('CRUDpedido/<int:pk>/', PedidoView.as_view(), name='pedido_ver'),
     path('CRUDpedido/<int:pk>/editar/', PedidoEditarView.as_view(), name='pedido_editar'),
     path('CRUDpedido/<int:pk>/eliminar/', PedidoEliminarView.as_view(), name='pedido_eliminar'),
+    path('CRUDoferta/', OfertaCRUDView.as_view(), name='oferta_crud'),
+    path('CRUDoferta/crear/', OfertaCrearView.as_view(), name='oferta_crear'),
+    path('CRUDoferta/<int:pk>/editar/', OfertaEditarView.as_view(), name='oferta_editar'),
+    path('CRUDoferta/<int:pk>/eliminar/', OfertaEliminarView.as_view(), name='oferta_eliminar'),
 ]

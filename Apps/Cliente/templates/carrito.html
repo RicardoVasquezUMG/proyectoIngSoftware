@@ -59,7 +59,13 @@
                     </div>
                     <div class="col-lg-2 col-12 mt-3 mt-lg-0 text-center">
                       <div class="price-tag">
-                        <span class="current-price">Q {{ producto.precio }}</span>
+                          {% if producto.tiene_oferta %}
+                            <span class="current-price">Q {{ producto.precio }}</span>
+                            <br>
+                            <small class="text-muted text-decoration-line-through">Q {{ producto.precio_original }}</small>
+                          {% else %}
+                            <span class="current-price">Q {{ producto.precio }}</span>
+                          {% endif %}
                       </div>
                     </div>
                     <div class="col-lg-2 col-12 mt-3 mt-lg-0 text-center">

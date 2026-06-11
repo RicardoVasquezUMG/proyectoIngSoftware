@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+from decimal import Decimal
+from functools import cached_property
+
 
 # Create your models here.
 class Cliente(models.Model):
@@ -25,6 +29,28 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.nombre  
+
+    @cached_property
+    def oferta_activa(self):
+        hoy = timezone.localdate()
+        return (
+            self.ofertas.filter(estado='activa', inicio__lte=hoy, fin__gte=hoy)
+            .order_by('-descuento', '-inicio')
+            .first()
+        )
+
+    @cached_property
+    def precio_efectivo(self):
+        oferta = self.oferta_activa
+        if not oferta:
+            return self.precio
+
+        descuento = Decimal('1') - (oferta.descuento / Decimal('100'))
+        return (self.precio * descuento).quantize(Decimal('0.01'))
+
+    @cached_property
+    def tiene_oferta(self):
+        return self.oferta_activa is not None and self.precio_efectivo < self.precio
     
 class Direccion(models.Model):
     entrega_CHOICES = [
