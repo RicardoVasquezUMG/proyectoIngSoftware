@@ -30,6 +30,12 @@ class CategoriaForm(forms.ModelForm):
         model = Categoria
         fields = ['nombre']
 
+    def clean_nombre(self):
+        nombre = self.cleaned_data['nombre'].strip()
+        if nombre.lower() == 'varios':
+            raise forms.ValidationError('La categoría Varios está reservada y no se puede crear ni renombrar.')
+        return nombre
+
 class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto        

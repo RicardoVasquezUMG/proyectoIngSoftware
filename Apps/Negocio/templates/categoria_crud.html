@@ -44,11 +44,17 @@
                   </div>
                   <div class="col-lg-4 col-12 mt-3 mt-lg-0 text-center">
                     <div class="item-actions d-flex justify-content-center gap-1">
+                      {% if categoria.nombre != 'Varios' %}
                       <a href={% url 'Negocio:categoria_editar' categoria.id %} class="btn btn-primary btn-sm">Editar</a>
+                      {% else %}
+                      <button type="button" class="btn btn-primary btn-sm" disabled>Editar</button>
+                      {% endif %}
+                      {% if categoria.nombre != 'Varios' %}
                       <form action={% url 'Negocio:categoria_eliminar' categoria.id %} method="post" style="display:inline;">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoría?');">Eliminar</button>
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoría? Si hay productos vinculados, serán pasados a la categoría Varios.');">Eliminar</button>
                       </form>
+                      {% endif %}
                     </div>
                   </div>
                 </div>

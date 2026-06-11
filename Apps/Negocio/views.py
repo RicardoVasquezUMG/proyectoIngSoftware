@@ -36,6 +36,10 @@ class CategoriaEditarView(UpdateView):
 class CategoriaEliminarView(View):
     def post(self, request, pk, *args, **kwargs):
         categoria = get_object_or_404(Categoria, pk=pk)
+        if categoria.nombre == 'Varios':
+            return redirect('Negocio:categoria_crud')
+        categoria_varios, _ = Categoria.objects.get_or_create(nombre='Varios')
+        Producto.objects.filter(categoria=categoria).update(categoria=categoria_varios)
         categoria.delete()
         return redirect('Negocio:categoria_crud')
     
