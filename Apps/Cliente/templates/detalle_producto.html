@@ -66,36 +66,49 @@
 
               <!-- Purchase Options -->
               <div class="purchase-section">
-                <div class="quantity-control">
-                  <label class="control-label">Cantidad:</label>
-                  <div class="quantity-input-group">
-                    <div class="quantity-selector">
-                      <button class="quantity-btn decrease" type="button">
-                        <i class="bi bi-dash"></i>
-                      </button>
-                      <input type="number" class="quantity-input" value="1" min="1" max="18">
-                      <button class="quantity-btn increase" type="button">
-                        <i class="bi bi-plus"></i>
-                      </button>
-                    </div>
-                  </div>
+                <div class="stock-info">
+                  {% if producto.stock > 0 %}
+                    <p style="color: green; font-weight: bold;">Stock disponible: {{ producto.stock }} unidades</p>
+                  {% else %}
+                    <p style="color: red; font-weight: bold;">Sin stock disponible</p>
+                  {% endif %}
                 </div>
 
-                <div class="action-buttons">
-                  <form action="{% url 'Cliente:carrito_agregar' producto.id %}" method="post" style="display:inline;">
-                    {% csrf_token %}
-                    <input type="hidden" name="cantidad" id="cantidad-input" value="1">
-                    <button type="submit" class="btn primary-action">
-                      <i class="bi bi-bag-plus"></i>
-                      Agregar al carrito
-                    </button>
-                  </form>
-                    <a href="{% url 'Cliente:formulario_pedido' %}" class="btn secondary-action">
-                      <i class="bi bi-lightning"> </i>
-                      Comprar ahora
-                    </a>
+                {% if producto.stock > 0 %}
+                  <div class="quantity-control">
+                    <label class="control-label">Cantidad:</label>
+                    <div class="quantity-input-group">
+                      <div class="quantity-selector">
+                        <button class="quantity-btn decrease" type="button">
+                          <i class="bi bi-dash"></i>
+                        </button>
+                        <input type="number" class="quantity-input" value="1" min="1" max="{{ producto.stock }}">
+                        <button class="quantity-btn increase" type="button">
+                          <i class="bi bi-plus"></i>
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
+
+                  <div class="action-buttons">
+                    <form action="{% url 'Cliente:carrito_agregar' producto.id %}" method="post" style="display:inline;">
+                      {% csrf_token %}
+                      <input type="hidden" name="cantidad" id="cantidad-input" value="1">
+                      <button type="submit" class="btn primary-action">
+                        <i class="bi bi-bag-plus"></i>
+                        Agregar al carrito
+                      </button>
+                    </form>
+                  </div>
+                {% else %}
+                  <div class="action-buttons">
+                    <button type="button" class="btn primary-action" disabled style="opacity: 0.5; cursor: not-allowed;">
+                      <i class="bi bi-bag-plus"></i>
+                      No disponible
+                    </button>
+                  </div>
+                {% endif %}
+              </div>
 
               <!-- Benefits List -->
               <div class="benefits-list">

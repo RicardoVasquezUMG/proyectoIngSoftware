@@ -110,8 +110,23 @@ def agregar_al_carrito(request, producto_id):
 	producto = get_object_or_404(Producto, id=producto_id)
 	carrito = request.session.get('carrito', {})
 	cantidad = int(request.POST.get('cantidad', 1))
+	
 	if cantidad <= 0:
 		return redirect('Cliente:carrito')
+	
+	# Validar que el producto tiene stock
+	if producto.stock == 0:
+		messages.error(request, f'Lo sentimos, {producto.nombre} no tiene stock disponible.')
+		return redirect('Cliente:carrito')
+	
+	# Validar que la cantidad a agregar no exceda el stock disponible
+	cantidad_actual_en_carrito = carrito.get(str(producto_id), {}).get('cantidad', 0)
+	cantidad_total = cantidad_actual_en_carrito + cantidad
+	
+	if cantidad_total > producto.stock:
+		messages.error(request, f'La cantidad solicitada para {producto.nombre} excede el stock disponible ({producto.stock}).')
+		return redirect('Cliente:carrito')
+	
 	if str(producto_id) in carrito:
 		carrito[str(producto_id)]['cantidad'] += cantidad
 	else:
@@ -128,6 +143,7 @@ def agregar_al_carrito(request, producto_id):
 	request.session['carrito'] = carrito
 	request.session['carrito_cantidad'] = carrito_cantidad
 	request.session.modified = True
+	messages.success(request, f'{producto.nombre} agregado al carrito exitosamente.')
 	return redirect('Cliente:carrito')
 
 @require_POST
@@ -293,26 +309,46 @@ def formulario_pedido(request):
 		direccion_id = request.POST.get('direccion') if not retiro_tienda else None
 		comentario = request.POST.get('comentario', '')
 		direccion_obj = Direccion.objects.get(id=direccion_id) if direccion_id else None
-		pedido = Pedido.objects.create(
-			cliente=cliente,
-			envio=not retiro_tienda,
-			estado='pendiente',
-			direccion_envio=direccion_obj,
-			comentarios=comentario
-		)
-		for item in productos:
-			producto_obj = Producto.objects.get(id=item['id'])
-			PedidoDetalle.objects.create(
-				pedido=pedido,
-				producto=producto_obj,
-				cantidad=item['cantidad'],
-				precio_unitario=producto_obj.precio_efectivo
-			)
-		# Limpiar carrito
-		request.session['carrito'] = {}
-		request.session['carrito_cantidad'] = 0
-		request.session.modified = True
-		return redirect(reverse('Cliente:ordenes_ver', args=[pedido.id]))
+
+		try:
+			with transaction.atomic():
+				# Crear el pedido
+				pedido = Pedido.objects.create(
+					cliente=cliente,
+					envio=not retiro_tienda,
+					estado='pendiente',
+					direccion_envio=direccion_obj,
+					comentarios=comentario
+				)
+
+				# Crear detalles del pedido y descontar stock
+				for item in productos:
+					producto_obj = Producto.objects.get(id=item['id'])
+					
+					if producto_obj.stock < item['cantidad']:
+						raise ValueError(f"No hay suficiente stock para {producto_obj.nombre}")
+
+					PedidoDetalle.objects.create(
+						pedido=pedido,
+						producto=producto_obj,
+						cantidad=item['cantidad'],
+						precio_unitario=producto_obj.precio_efectivo
+					)
+					
+					# Descontar stock
+					producto_obj.stock -= item['cantidad']
+					producto_obj.save()
+
+				# Limpiar carrito
+				request.session['carrito'] = {}
+				request.session['carrito_cantidad'] = 0
+				request.session.modified = True
+				
+				return redirect(reverse('Cliente:ordenes_ver', args=[pedido.id]))
+		except ValueError as e:
+			# Manejar el error de stock insuficiente
+			messages.error(request, str(e))
+			return redirect('Cliente:carrito') # Redirigir de nuevo al carrito
 
 	return render(request, 'pedido_formulario.html', {
 		'direcciones': direcciones,

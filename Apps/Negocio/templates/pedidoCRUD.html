@@ -16,7 +16,7 @@
                             <th style="background:#111; color:#fff;">Cliente</th>
                             <th style="background:#111; color:#fff;">Fecha</th>
                             <th style="background:#111; color:#fff;">Estado</th>
-                            <th style="background:#111; color:#fff;">Dirección</th>
+                            <th style="background:#111; color:#fff;">Dirección - Teléfono</th>
                             <th style="background:#111; color:#fff;">Comentarios</th>
                             <th style="background:#111; color:#fff;">Acciones</th>
                         </tr>
@@ -26,14 +26,14 @@
                         <tr>
                             <td>{{ pedido.id }}</td>
                             <td>{{ pedido.cliente.perfil.get_full_name|default:pedido.cliente.perfil.username }}</td>
-                            <td>{{ pedido.fecha }}</td>
+                            <td>{{ pedido.fecha|date:"d/m/Y" }}</td>
                             <td>{{ pedido.estado }}</td>
                             <td>{% if pedido.direccion_envio %}{{ pedido.direccion_envio }}{% else %}Retiro en tienda{% endif %}</td>
                             <td>{{ pedido.comentarios }}</td>
                             <td>
                                 <a href="{% url 'Negocio:pedido_ver' pedido.id %}" class="btn btn-outline-secondary btn-sm" style="border-radius: 4px; border: 1px solid #bbb; background: none; color: #333;">Ver</a>
                                 <a href="{% url 'Negocio:pedido_editar' pedido.id %}" class="btn btn-outline-primary btn-sm" style="border-radius: 4px; border: 1px solid #007bff; background: none; color: #007bff;">Editar</a>
-                                <form method="post" action="{% url 'Negocio:pedido_eliminar' pedido.id %}" style="display:inline;">
+                                <form method="post" action="{% url 'Negocio:pedido_eliminar' pedido.id %}" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas borrar este pedido?');">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-outline-danger btn-sm" style="border-radius: 4px; border: 1px solid #dc3545; background: none; color: #dc3545;">Eliminar</button>
                                 </form>
