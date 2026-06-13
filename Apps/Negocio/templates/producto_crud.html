@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+  <main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title light-background">
+      <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1 class="mb-2 mb-lg-0">Manejo de Productos</h1>
+        <nav class="breadcrumbs">
+          <ol>
+            <li><a href="#">Home</a></li>
+            <li class="current">Manejo de Productos</li>
+          </ol>
+        </nav>
+      </div>
+    </div><!-- End Page Title -->
+
+
+    <!-- Cart Section -->
+    <section id="cart" class="cart section" style="padding-top: 1.5rem !important; padding-bottom: 1.5rem !important;">
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row align-items-start">
+          <div class="col-lg-3 col-md-4 mb-4">
+            <div class="ms-0">
+              <h2>Nuevo Producto</h2>
+              <a href="{% url 'Negocio:producto_crear' %}" class="btn btn-primary mb-3">Agregar Producto</a>
+            </div>
+            <!-- Categorías para filtrar -->
+            <div class="product-categories-widget widget-item mt-4">
+              <h3 class="widget-title">Categorías</h3>
+              <ul class="category-tree list-unstyled mb-0">
+                <li class="category-item">
+                  <a href="?" class="category-link">Todos</a>
+                </li>
+                {% for categoria in categorias %}
+                <li class="category-item">
+                  <a href="?categoria={{ categoria.id }}" class="category-link">{{ categoria.nombre }}</a>
+                </li>
+                {% empty %}
+                <li class="category-item">
+                  <span class="text-muted">No hay categorías disponibles.</span>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-9 col-md-8" data-aos="fade-up" data-aos-delay="200">
+            <!-- Mensaje de filtrado -->
+            {% if request.GET.categoria %}
+              {% for cat in categorias %}
+                {% if cat.id|stringformat:"s" == request.GET.categoria %}
+                  <h5 class="mb-4">Filtrando por categoría: <strong>{{ cat.nombre }}</strong></h5>
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              <h5 class="mb-4">Mostrando todos los productos</h5>
+            {% endif %}
+            <div class="cart-items">
+              <div class="cart-header d-none d-lg-block">
+                <div class="row align-items-center">
+                  <div class="col-lg-4">
+                    <h5>Producto</h5>
+                  </div>
+                  <div class="col-lg-2 text-center">
+                    <h5>Precio</h5>
+                  </div>
+                  <div class="col-lg-2 text-center">
+                    <h5>Categoría</h5>
+                  </div>
+                  <div class="col-lg-2 text-center">
+                    <h5>Stock</h5>
+                  </div>
+                  <div class="col-lg-2 text-center">
+                    <h5>Acciones</h5>
+                  </div>
+                </div>
+              </div>
+
+              {% for producto in productos %}
+              <div class="cart-item">
+                <div class="row align-items-center">
+                  <div class="col-lg-4 col-12 mt-3 mt-lg-0 mb-lg-0 mb-3">
+                    <div class="product-info d-flex align-items-center">
+                      <div class="product-image">
+                        <img src="{{ producto.imagen }}" alt="Product" class="img-fluid" loading="lazy">
+                      </div>
+                      <div class="product-details">
+                        <h6 class="product-title">{{ producto.nombre }}</h6>
+                        <div class="product-meta">
+                          <span class="product-color">{{ producto.descripcion|truncatechars:25 }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-2 col-12 mt-3 mt-lg-0 text-center">
+                    <div class="price-tag">
+                      <span class="current-price">Q{{ producto.precio }}</span>
+                    </div>
+                  </div>
+                  <div class="col-lg-2 col-12 mt-3 mt-lg-0 text-center">
+                    <span>{{ producto.categoria.nombre }}</span>
+                  </div>
+                  <div class="col-lg-2 col-12 mt-3 mt-lg-0 text-center">
+                    <span>{{ producto.stock }}</span>
+                  </div>
+                  <div class="col-lg-2 col-12 mt-3 mt-lg-0 text-center">
+                    <div class="item-actions d-flex justify-content-center gap-1">
+                      <a href="{% url 'Negocio:producto_editar' producto.id %}" class="btn btn-primary btn-sm">Editar</a>
+                      <form action="{% url 'Negocio:producto_eliminar' producto.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?');">Eliminar</button>
+                      </form>
+                      <a href="{% url 'Negocio:producto_ver' producto.id %}" class="btn btn-success btn-sm">Ver</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% empty %}
+              <p>No hay productos disponibles.</p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- /Cart Section -->
+
+  </main>
+{% endblock %}

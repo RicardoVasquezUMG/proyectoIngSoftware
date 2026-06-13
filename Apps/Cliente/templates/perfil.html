@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block contenido %}
+  <main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title light-background">
+      <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1 class="mb-2 mb-lg-0">Perfil</h1>
+        <nav class="breadcrumbs">
+          <ol>
+            <li><a href="index.html">Home</a></li>
+            <li class="current">Perfil</li>
+          </ol>
+        </nav>
+      </div>
+    </div><!-- End Page Title -->
+
+    <!-- Account Section -->
+    <section id="account" class="account section">
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        
+        <div class="row g-4">
+          <!-- Profile Menu -->
+          <div class="col-lg-3">
+            <div class="profile-menu collapse d-lg-block" id="profileMenu">
+              <!-- User Info -->
+              <div class="user-info" data-aos="fade-right">
+                <div class="user-avatar">
+                  <div class="user-avatar-icon" role="img" aria-label="Usuario">
+                    <i class="bi bi-person-circle" style="font-size:4rem; color:#6c757d;" aria-hidden="true"></i>
+                  </div>
+                  <span class="status-badge"><i class="bi bi-shield-check"></i></span>
+                </div>
+                <h4>{{ cliente.perfil.get_full_name|default:cliente.perfil.username }}</h4>
+                <p class="small text-muted mb-1"><i class="bi bi-envelope"></i> {{ cliente.perfil.email }}</p>
+                {% if cliente.telefono %}
+                  <p class="small text-muted mb-1"><i class="bi bi-telephone"></i> {{ cliente.telefono }}</p>
+                {% endif %}
+                <div class="mt-2">
+                  <a href="{% url 'Cliente:editar_perfil' %}" class="btn btn-outline-primary btn-sm">Editar perfil</a>
+                </div>
+                <div class="user-status">
+                  <i class="bi bi-award"></i>
+                  <span>Premium Member</span>
+                </div>
+              </div>
+
+              <!-- Navigation Menu -->
+              <nav class="menu-nav">
+                <ul class="nav flex-column" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'Cliente:ordenes' %}">
+                      <i class="bi bi-box-seam"></i>
+                      <span>Mis Ordenes</span>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'Cliente:direcciones' %}">
+                      <i class="bi bi-geo-alt"></i>
+                      <span>Direcciones</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+
+          <!-- Content Area -->
+          <div class="col-lg-9">
+            <div class="content-area">
+              <div class="tab-content">
+                {% block perfil_contenido %}
+                {% endblock %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section><!-- /Account Section -->
+
+  </main>
+
+{% endblock %}

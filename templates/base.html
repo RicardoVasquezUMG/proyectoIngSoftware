@@ -47,7 +47,7 @@
           </a>
 
           <!-- Search -->
-          <form class="search-form desktop-search-form" method="get" action="{#}">
+          <form class="search-form desktop-search-form" method="get" action="{% url 'Home:search_results' %}">
             <div class="input-group">
               <input type="text" class="form-control" name="dato" placeholder="Buscar  producto" value="{{ request.GET.dato }}">
               <button class="btn" type="submit">
@@ -78,29 +78,29 @@
                 </div>
                 <div class="dropdown-body">
                   {% if user.is_authenticated %}
-                    <a class="dropdown-item d-flex align-items-center" href={#}>
+                    <a class="dropdown-item d-flex align-items-center" href={% url 'Cliente:perfil' %}>
                       <i class="bi bi-person-circle me-2"></i>
                       <span>Mi Perfil</span>
                     </a>
-                    <a class="dropdown-item d-flex align-items-center" href={#}>
+                    <a class="dropdown-item d-flex align-items-center" href={% url 'Cliente:ordenes' %}>
                       <i class="bi bi-bag-check me-2"></i>
                       <span>Mis Ordenes</span>
                     </a>
                   {% endif %}
                   {% if user.is_authenticated and user.groups.all.0.name == 'Personal' %}
-                    <a class="dropdown-item d-flex align-items-center" href={#}>
+                    <a class="dropdown-item d-flex align-items-center" href={% url 'Negocio:producto_crud' %}>
                       <i class="bi bi-gear me-2"></i>
                       CRUD Productos
                     </a>
-                    <a class="dropdown-item d-flex align-items-center" href={#}>
-                      <i class="bi bi-gear me-2"></i>
-                      CRUD Reservas
-                    </a>
-                    <a class="dropdown-item d-flex align-items-center" href={#}>
+                    <a class="dropdown-item d-flex align-items-center" href={% url 'Negocio:categoria_crud' %}>
                       <i class="bi bi-gear me-2"></i>
                       CRUD Categorias
                     </a>
-                    <a class="dropdown-item d-flex align-items-center" href={#}>
+                    <a class="dropdown-item d-flex align-items-center" href={% url 'Negocio:oferta_crud' %}>
+                      <i class="bi bi-gear me-2"></i>
+                      CRUD Ofertas
+                    </a>
+                    <a class="dropdown-item d-flex align-items-center" href={% url 'Negocio:pedido_crud' %}>
                       <i class="bi bi-gear me-2"></i>
                       CRUD Pedidos
                     </a>
@@ -108,20 +108,20 @@
                 </div>
                 <div class="dropdown-footer">
                   {% if user.is_authenticated %}
-                    <form method="post" action="{#}">
+                    <form method="post" action="{% url 'Cliente:logout' %}">
                       {% csrf_token %}
                       <button type="submit" class="btn btn-danger w-100">Cerrar Sesión</button>
                     </form>
                   {% else %}
-                    <a href="{#}" class="btn btn-primary w-100 mb-2">Registrar</a>
-                    <a href="{#}" class="btn btn-outline-primary w-100">Iniciar Sesion</a>
+                    <a href="{% url 'Cliente:registrarCliente' %}" class="btn btn-primary w-100 mb-2">Registrar</a>
+                    <a href="{% url 'Cliente:loginapp' %}" class="btn btn-outline-primary w-100">Iniciar Sesion</a>
                   {% endif %}
                 </div>
               </div>
             </div>
 
             <!-- Cart -->
-            <a href="{#}" class="header-action-btn">
+            <a href="{% url 'Cliente:carrito' %}" class="header-action-btn">
               <i class="bi bi-cart3"></i>
               <span class="badge">{{ request.session.carrito_cantidad|default:0 }}</span>
             </a>
@@ -140,13 +140,9 @@
         <nav id="navmenu" class="navmenu">
           <ul>
             <li><a href={% url 'Home:homeapp' %}>Inicio</a></li>
-            <li><a href={#}>Categorías</a></li>
+            <li><a href={% url 'Cliente:listadoProductos' %}>Categorías</a></li>
             <li><a href={% url 'Home:acerca_app' %}>Acerca de </a></li>
             <li><a href={% url 'Home:soporte_app' %}>Soporte</a></li>
-            
-            <!-- <li><a href="checkout.html">Checkout</a></li>
-            <li><a href="product-details.html">Product Details</a></li>
-            <li><a href="cart.html">Cart</a></li> -->
           </ul>
         </nav>
       </div>
@@ -155,7 +151,7 @@
     <!-- Mobile Search Form -->
     <div class="collapse" id="mobileSearch">
       <div class="container">
-        <form class="search-form">
+        <form class="search-form" method="get" action="{% url 'Home:search_results' %}">
           <div class="input-group">
             <input type="text" class="form-control" placeholder="Search for products">
             <button class="btn" type="submit">

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block contenido %}
+  <main class="main">
+    <!-- Editar Categoria Section -->
+    <section id="editar-categoria" class="register section">
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row justify-content-center">
+          <div class="col-lg-10">
+            <div class="registration-form-wrapper">
+              <div class="form-header text-center">
+                <h2>Editar categoría</h2>
+              </div>
+              <div class="row">
+                <div class="col-lg-8 mx-auto">
+                  <form method="post">
+                    {% csrf_token %}
+                    {% if form.errors %}
+                      <div class="alert alert-danger">
+                        <ul>
+                          {% for field in form %}
+                            {% for error in field.errors %}
+                              <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
+                          {% endfor %}
+                          {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    {% endif %}
+                    <div class="form-floating mb-3">
+                      {{ form.nombre|add_class:"form-control"|attr:"placeholder:Nombre de la categoría"|attr:"required" }}
+                      <label for="{{ form.nombre.id_for_label }}">Nombre de la categoría</label>
+                    </div>
+                    <div class="d-grid mb-4">
+                      <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <div class="decorative-elements">
+                <div class="circle circle-1"></div>
+                <div class="circle circle-2"></div>
+                <div class="circle circle-3"></div>
+                <div class="square square-1"></div>
+                <div class="square square-2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- /Editar Categoria Section -->
+  </main>
+{% endblock %}

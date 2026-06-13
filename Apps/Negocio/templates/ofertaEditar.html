@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block contenido %}
+  <main class="main">
+    <section class="register section">
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row justify-content-center">
+          <div class="col-lg-10">
+            <div class="registration-form-wrapper">
+              <div class="form-header text-center">
+                <h2>Editar oferta</h2>
+              </div>
+              <div class="row">
+                <div class="col-lg-8 mx-auto">
+                  <form method="post">
+                    {% csrf_token %}
+                    <div class="form-floating mb-3">
+                      {{ form.inicio|add_class:"form-control" }}
+                      <label for="{{ form.inicio.id_for_label }}">Inicio</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                      {{ form.fin|add_class:"form-control" }}
+                      <label for="{{ form.fin.id_for_label }}">Fin</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                      {{ form.estado|add_class:"form-control" }}
+                      <label for="{{ form.estado.id_for_label }}">Estado</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                      {{ form.descuento|add_class:"form-control" }}
+                      <label for="{{ form.descuento.id_for_label }}">Descuento (%)</label>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Productos</label>
+                      <div class="border rounded p-3" style="max-height: 320px; overflow-y: auto;">
+                        {{ form.productos }}
+                      </div>
+                    </div>
+                    <div class="d-grid mb-4">
+                      <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+{% endblock %}

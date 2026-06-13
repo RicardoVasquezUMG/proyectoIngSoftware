@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block contenido %}
+  <main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title light-background">
+      <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1 class="mb-2 mb-lg-0">Orden</h1>
+        <nav class="breadcrumbs">
+          <ol>
+            <li><a href="index.html">Inicio</a></li>
+            <li class="current">Confirmación de Orden</li>
+          </ol>
+        </nav>
+      </div>
+    </div><!-- End Page Title -->
+
+    <!-- Order Confirmation Section -->
+    <section id="order-confirmation" class="order-confirmation section">
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="order-confirmation-3">
+          <div class="row g-0">
+            <!-- Left sidebar with order summary -->
+            <div class="col-lg-4 sidebar" data-aos="fade-right">
+              <div class="sidebar-content">
+                <!-- Success animation -->
+                <div class="success-animation">
+                  <i class="bi bi-check-lg"></i>
+                </div>
+
+                <!-- Order number and date -->
+                <div class="order-id">
+                  <h4>Pedido #{{ pedido.id }}</h4>
+                  <div class="order-date">{{ pedido.fecha|date:'d/m/Y ' }}</div>
+                  <div class="order-status">Estado: {{ pedido.estado }}</div>
+                </div>
+
+                
+
+                <!-- Price summary -->
+                <div class="price-summary">
+                  <h5>Resumen de Precios</h5>
+                  <ul class="summary-list">
+                    <li>
+                      <span>Subtotal</span>
+                      <span>Q {{ subtotal|floatformat:2 }}</span>
+                    </li>
+                    <li>
+                      <span>Envío</span>
+                      <span>Q {{ envio|floatformat:2 }}{% if not pedido.envio %} (Retiro en tienda){% endif %}</span>
+                    </li>
+                    <li class="total">
+                      <span>Total</span>
+                      <span>Q {{ total|floatformat:2 }}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Main content area -->
+            <div class="col-lg-8 main-content" data-aos="fade-in">
+              <!-- Thank you message -->
+              <div class="thank-you-message">
+                <h1>Gracias por su pedido!</h1>
+                <p>Hemos recibido su pedido y comenzaremos a procesarlo de inmediato.
+                  Le enviaremos actualizaciones por la app  a medida que su pedido avance.</p>
+              </div>
+
+              <!-- Shipping details -->
+              <div class="details-card" data-aos="fade-up">
+                <div class="card-header" data-toggle="collapse">
+                  <h3>
+                    <i class="bi bi-geo-alt"></i>
+                    Detalle de Envío
+                  </h3>
+                  <i class="bi bi-chevron-down toggle-icon"></i>
+                </div>
+                <div class="card-body">
+                  <div class="row g-4">
+                    <div class="col-md-6">
+                      <div class="detail-group">
+                        <label>Enviar a</label>
+                        <address>
+                          {{ cliente.perfil.first_name }} {{ cliente.perfil.last_name }}<br>
+                          {% if pedido.direccion_envio %}
+                            {{ pedido.direccion_envio.direccion_linea1 }}<br>
+                            {{ pedido.direccion_envio.Colonia }}<br>
+                            Tel: {{ pedido.direccion_envio.telefono }}<br>
+                          {% else %}
+                            Retiro en tienda<br>
+                          {% endif %}
+                        </address>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="detail-group">
+                        <label>Contacto</label>
+                        <div class="contact-info">
+                          <p><i class="bi bi-envelope"></i> {{ cliente.perfil.email }}</p>
+                          <p><i class="bi bi-telephone"></i> {% if pedido.direccion_envio %}{{ pedido.direccion_envio.telefono }}{% endif %}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              
+
+              <!-- Order items -->
+              <div class="details-card" data-aos="fade-up" "="">
+            <div class=" card-header" data-toggle="collapse">
+                <h3>
+                  <i class="bi bi-bag-check"></i>
+                  Artículos del Pedido
+                </h3>
+                <i class="bi bi-chevron-down toggle-icon"></i>
+              </div>
+              <div class="card-body">
+                {% for detalle in detalles %}
+                <div class="item">
+                  <div class="item-image">
+                    {% if detalle.producto.imagen %}
+                      <img src="{{ detalle.producto.imagen }}" alt="Product" loading="lazy">
+                    {% else %}
+                      <img src="{% static 'assets/img/product/default.webp' %}" alt="Product" loading="lazy">
+                    {% endif %}
+                  </div>
+                  <div class="item-details">
+                    <h4>{{ detalle.producto.nombre }}</h4>
+                    <div class="item-meta">
+                      {% if detalle.producto.color %}<span>Color: {{ detalle.producto.color }}</span>{% endif %}
+                      {% if detalle.producto.size %}<span>Size: {{ detalle.producto.size }}</span>{% endif %}
+                    </div>
+                    <div class="item-price">
+                      <span class="quantity">{{ detalle.cantidad }} ×</span>
+                      <span class="price">Q {{ detalle.precio_unitario|default:detalle.producto.precio_efectivo }}</span>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="action-area" data-aos="fade-up">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <a href={% url 'Cliente:listadoProductos' %} class="btn btn-back">
+                    <i class="bi bi-arrow-left"></i>
+                    Regresar a la Tienda
+                  </a>
+                </div>
+                <div class="col-md-6">
+                  <a href={% url 'Cliente:ordenes' %} class="btn btn-account">
+                    <span>Regresar</span>
+                    <i class="bi bi-arrow-right"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+
+      </div>
+
+    </section><!-- /Order Confirmation Section -->
+
+  </main>
+
+{% endblock %}

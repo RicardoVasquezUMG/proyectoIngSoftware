@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+<main class="main">
+    <div class="container mt-4">
+        <h2>Editar Pedido</h2>
+        <form method="post">
+            {% csrf_token %}
+            <h4>Estado del pedido</h4>
+            {{ estado_form.as_p }}
+            <hr>
+            <h4>Detalles del pedido</h4>
+            {{ detalle_formset.management_form }}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for form in detalle_formset %}
+                        <tr>
+                            <td>{{ form.instance.producto.nombre }}</td>
+                            <td>{{ form.cantidad }}</td>
+                            {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <a href="{% url 'Negocio:pedido_crud' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</main>
+{% endblock %}

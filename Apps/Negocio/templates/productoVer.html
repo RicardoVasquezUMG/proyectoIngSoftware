@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+
+  <main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title light-background">
+      <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1 class="mb-2 mb-lg-0">Detalle del Producto</h1>
+        <nav class="breadcrumbs">
+          <ol>
+            <li><a href="#">Home</a></li>
+            <li class="current">Detalles del Producto</li>
+          </ol>
+        </nav>
+      </div>
+    </div><!-- End Page Title -->
+
+    <!-- Product Details Section -->
+    <section id="product-details" class="product-details section">
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row g-4">
+          <!-- Product Gallery -->
+          <div class="col-lg-7" data-aos="zoom-in" data-aos-delay="150">
+            <div class="product-gallery">
+              <div class="main-showcase">
+                <div class="image-zoom-container">
+                  <img src="{% if producto.imagen %}{{ producto.imagen }}{% else %}{% static 'assets/img/product/product-details-6.webp' %}{% endif %}" alt="{{ producto.nombre }}" class="img-fluid main-product-image drift-zoom" id="main-product-image" data-zoom="{% if producto.imagen %}{{ producto.imagen }}{% else %}{% static 'assets/img/product/product-details-6.webp' %}{% endif %}">
+
+                </div>
+              </div>
+
+              
+            </div>
+          </div>
+
+          <!-- Product Details -->
+          <div class="col-lg-5" data-aos="fade-left" data-aos-delay="200">
+            <div class="product-details">
+              <div class="product-badge-container">
+                <span class="badge-category">{{ producto.categoria.nombre }}</span>
+                
+              </div>
+
+              <h1 class="product-name">{{ producto.nombre }}</h1>
+
+              <div class="pricing-section">
+                <div class="price-display">
+                  <span class="sale-price">Q{{ producto.precio }}</span>
+                </div>
+              </div>
+
+              <div class="product-description">
+                <p>{{ producto.descripcion }}</p>
+              </div>
+
+              <!-- Purchase Options -->
+                <div class="purchase-section mt-4">
+                <div class="action-buttons">
+                  <a href="{% url 'Negocio:producto_crud' %}" class="btn btn-primary">
+                  Volver
+                  </a>
+                </div>
+                </div>
+
+              <!-- Benefits List -->
+              <div class="benefits-list">
+                <div class="benefit-item">
+                  <i class="bi bi-truck"></i>
+                  <span>Envio gratis en pedidos superiores a Q75</span>
+                </div>
+                <div class="benefit-item">
+                  <i class="bi bi-clock"></i>
+                  <span>Disponibilidad garantizada sin complicaciones los 365 días</span>
+                </div>
+                <div class="benefit-item">
+                  <i class="bi bi-shield-check"></i>
+                  <span>Calidad en nuestros productos garantizada</span>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+
+        </div>
+    </section><!-- /Product Details Section -->
+
+  </main>
+{% endblock %}

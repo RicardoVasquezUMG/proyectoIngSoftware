@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+
+  <main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title light-background">
+      <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1 class="mb-2 mb-lg-0">Detalles del Producto</h1>
+        <nav class="breadcrumbs">
+          <ol>
+            <li><a href="#">Home</a></li>
+            <li class="current">Detalles del Producto</li>
+          </ol>
+        </nav>
+      </div>
+    </div><!-- End Page Title -->
+
+    <!-- Product Details Section -->
+    <section id="product-details" class="product-details section">
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row g-4">
+          <!-- Product Gallery -->
+          <div class="col-lg-7" data-aos="zoom-in" data-aos-delay="150">
+            <div class="product-gallery">
+              <div class="main-showcase">
+                <div class="image-zoom-container">
+                  <img src="{% if producto.imagen %}{{ producto.imagen }}{% else %}{% static 'assets/img/product/product-details-6.webp' %}{% endif %}" alt="{{ producto.nombre }}" class="img-fluid main-product-image drift-zoom" id="main-product-image" data-zoom="{% if producto.imagen %}{{ producto.imagen }}{% else %}{% static 'assets/img/product/product-details-6.webp' %}{% endif %}">
+
+                </div>
+              </div>
+
+              
+            </div>
+          </div>
+
+          <!-- Product Details -->
+          <div class="col-lg-5" data-aos="fade-left" data-aos-delay="200">
+            <div class="product-details">
+              <div class="product-badge-container">
+                <span class="badge-category">{{ producto.categoria.nombre }}</span>
+                {% if producto.tiene_oferta %}
+                  <span class="badge bg-danger">-{{ producto.oferta_activa.descuento }}%</span>
+                {% endif %}
+              </div>
+
+              <h1 class="product-name">{{ producto.nombre }}</h1>
+
+              <div class="pricing-section">
+                <div class="price-display">
+                  {% if producto.tiene_oferta %}
+                    <span class="sale-price">Q{{ producto.precio_efectivo }}</span>
+                    <span class="text-muted text-decoration-line-through ms-3">Q{{ producto.precio }}</span>
+                  {% else %}
+                    <span class="sale-price">Q{{ producto.precio }}</span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="product-description">
+                <p>{{ producto.descripcion }}</p>
+              </div>
+
+              <!-- Purchase Options -->
+              <div class="purchase-section">
+                <div class="stock-info">
+                  {% if producto.stock > 0 %}
+                    <p style="color: green; font-weight: bold;">Stock disponible: {{ producto.stock }} unidades</p>
+                  {% else %}
+                    <p style="color: red; font-weight: bold;">Sin stock disponible</p>
+                  {% endif %}
+                </div>
+
+                {% if producto.stock > 0 %}
+                  <div class="quantity-control">
+                    <label class="control-label">Cantidad:</label>
+                    <div class="quantity-input-group">
+                      <div class="quantity-selector">
+                        <button class="quantity-btn decrease" type="button">
+                          <i class="bi bi-dash"></i>
+                        </button>
+                        <input type="number" class="quantity-input" value="1" min="1" max="{{ producto.stock }}">
+                        <button class="quantity-btn increase" type="button">
+                          <i class="bi bi-plus"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="action-buttons">
+                    <form action="{% url 'Cliente:carrito_agregar' producto.id %}" method="post" style="display:inline;">
+                      {% csrf_token %}
+                      <input type="hidden" name="cantidad" id="cantidad-input" value="1">
+                      <button type="submit" class="btn primary-action">
+                        <i class="bi bi-bag-plus"></i>
+                        Agregar al carrito
+                      </button>
+                    </form>
+                  </div>
+                {% else %}
+                  <div class="action-buttons">
+                    <button type="button" class="btn primary-action" disabled style="opacity: 0.5; cursor: not-allowed;">
+                      <i class="bi bi-bag-plus"></i>
+                      No disponible
+                    </button>
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Benefits List -->
+              <div class="benefits-list">
+                <div class="benefit-item">
+                  <i class="bi bi-truck"></i>
+                  <span>Envio gratis en pedidos superiores a Q75</span>
+                </div>
+                <div class="benefit-item">
+                  <i class="bi bi-clock"></i>
+                  <span>Disponibilidad garantizada sin complicaciones los 365 días</span>
+                </div>
+                <div class="benefit-item">
+                  <i class="bi bi-shield-check"></i>
+                  <span>Calidad en nuestros productos garantizada</span>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+
+        </div>
+    </section><!-- /Product Details Section -->
+
+  </main>
+{% endblock %}

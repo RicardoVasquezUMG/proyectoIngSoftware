@@ -19,11 +19,10 @@
       <div class="hero-container">
         <div class="hero-content">
           <div class="content-wrapper" data-aos="fade-up" data-aos-delay="100">
-            <h1 class="hero-title">Prueba</h1>
-            <p class="hero-description">Descubre una experiencia 4k en bocinas</p>
+            <h1 class="hero-title">Bienvenido a Nuestra Tienda</h1>
+            <p class="hero-description">Descubre la última tecnología en electrónica y accesorios para tu hogar.</p>
             <div class="hero-actions" >
-              <a href={#} class="btn-primary">Comprar</a>
-              <a href={#} class="btn-secondary">Reserva ahora</a>
+              <a href={% url 'Cliente:listadoProductos' %} class="btn-primary">Comprar</a>
             </div>
             <div class="features-list" >
               <div class="feature-item">
@@ -48,11 +47,32 @@
       </div>    
     </section><!-- /Hero Section -->
 
+    <!-- Featured Offers Section -->
+    <section id="featured-offers" class="category-product-list section py-5">
+      <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+          <h2 class="display-5 fw-bold" style="color:#2d3748;">Productos ofertados</h2>
+          <p class="lead" style="color:#4a5568;">Descuentos activos listos para agregar al carrito.</p>
+        </div>
+        <div class="row g-4">
+          {% for producto in productos_ofertados %}
+          <div class="col-12 col-md-6 col-lg-3">
+            {% include 'includes/product_card.html' %}
+          </div>
+          {% empty %}
+          <div class="col-12">
+            <p class="text-center text-muted mb-0">No hay ofertas activas en este momento.</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
     <!-- Chefs Section -->
     <section id="chefs" class="chefs section py-5" style="background: linear-gradient(135deg, #f8fafc 60%, #e0e7ef 100%);">
       <div class="container">
         <div class="text-center mb-5" data-aos="fade-up">
-          <h2 class="display-5 fw-bold" style="color:#2d3748;">Ofertas</h2>
+          <h2 class="display-5 fw-bold" style="color:#2d3748;">Productos Destacados</h2>
           <p class="lead" style="color:#4a5568;">Pasión, creatividad y excelencia en cada dispositivo</p>
         </div>
         <div class="row align-items-center mb-5">
@@ -64,9 +84,9 @@
           <div class="col-lg-7" data-aos="fade-left" data-aos-delay="200">
             <div class="p-4 rounded-4 bg-white shadow-sm h-100">
               <span class="badge bg-warning text-dark mb-2 px-3 py-2 fs-6"><i class="bi bi-award me-2"></i>Lider en ventas</span>
-              <h3 class="fw-bold mb-1" style="color:#2d3748;">Television 4k</h3>
-              <div class="mb-2 text-muted"><i class="bi bi-clock-history me-1"></i> 15+ años de experiencia</div>
-              <p class="mb-3" style="color:#4a5568;">Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae. Mauris viverra sit amet lacus cursus, vel blandit libero tempus. Nulla facilisi morbi tempus iaculis urna id volutpat lacus laoreet non curabitur gravida.</p>
+              <h3 class="fw-bold mb-1" style="color:#2d3748;">Computadora de escritorio Apple</h3>
+              <div class="mb-2 text-muted"><i class="bi bi-clock-history me-1"></i> Garantía de por vida</div>
+              <p class="mb-3" style="color:#4a5568;">Computadora de escritorio Apple con procesador M1, 16GB de RAM y 512GB de almacenamiento.</p>
               <div class="d-flex gap-3">
                 <span class="d-flex align-items-center"><i class="bi bi-trophy-fill text-warning me-2"></i>Premio a la Excelencia 2023</span>
                 <span class="d-flex align-items-center"><i class="bi bi-star-fill text-primary me-2"></i>------</span>
@@ -81,9 +101,9 @@
                 <img src="https://backoffice.max.com.gt/media/catalog/product/i/l/ilce7m4k.jpg?optimize=high&fit=bounds&height=&width=" class="img-fluid w-100 h-100 object-fit-cover" style="object-fit: cover; height: 100%; width: 100%;" alt="Elena Vasquez">
               </div>
               <div class="p-3" style="min-height: 90px; max-height: 35%; display: flex; flex-direction: column; justify-content: center;">
-                <h5 class="fw-bold mb-1">Prueba</h5>
-                <span class="text-primary mb-2 d-block">Prueba</span>
-                <p class="small text-muted mb-0">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua consectetur adipiscing elit.</p>
+                <h5 class="fw-bold mb-1">Camaras</h5>
+                <span class="text-primary mb-2 d-block">Accesorios</span>
+                <p class="small text-muted mb-0">Amplia selección de accesorios para cámaras de todos los modelos (Sony, Canon, Nikon).</p>
               </div>
             </div>
           </div>
@@ -94,8 +114,8 @@
               </div>
               <div class="p-3" style="min-height: 90px; max-height: 35%; display: flex; flex-direction: column; justify-content: center;">
                 <h5 class="fw-bold mb-1">Equipos de Sonido</h5>
-                <span class="text-primary mb-2 d-block">prueba</span>
-                <p class="small text-muted mb-0">Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.</p>
+                <span class="text-primary mb-2 d-block">Accesorios</span>
+                <p class="small text-muted mb-0">Ultima tecnologia en audio, con equipos importados.</p>
               </div>
             </div>
           </div>
@@ -106,8 +126,8 @@
               </div>
               <div class="p-3" style="min-height: 90px; max-height: 35%; display: flex; flex-direction: column; justify-content: center;">
                 <h5 class="fw-bold mb-1">Alexa</h5>
-                <span class="text-primary mb-2 d-block">prueba</span>
-                <p class="small text-muted mb-0">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla.</p>
+                <span class="text-primary mb-2 d-block">Asistente de Voz</span>
+                <p class="small text-muted mb-0">Controla tu hogar con solo decirle "Alexa".</p>
               </div>
             </div>
           </div>
@@ -118,12 +138,14 @@
               </div>
               <div class="p-3" style="min-height: 90px; max-height: 35%; display: flex; flex-direction: column; justify-content: center;">
                 <h5 class="fw-bold mb-1">Laptop Hp</h5>
-                <span class="text-primary mb-2 d-block">Wine Sommelier</span>
-                <p class="small text-muted mb-0">Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit.</p>
+                <span class="text-primary mb-2 d-block">Computadora Portátil</span>
+                <p class="small text-muted mb-0">Potente y eficiente para tu productividad.</p>
               </div>
             </div>
           </div>
         </div>
       </div>
     </section><!-- /Chefs Section -->
+
+
 {% endblock %}

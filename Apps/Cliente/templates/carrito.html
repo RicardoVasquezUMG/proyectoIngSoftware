@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+  <main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title light-background">
+      <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1 class="mb-2 mb-lg-0">Carrito de Compras</h1>
+        <nav class="breadcrumbs">
+          <ol>
+            <li><a href="index.html">Home</a></li>
+            <li class="current">Carrito</li>
+          </ol>
+        </nav>
+      </div>
+    </div><!-- End Page Title -->
+
+    <!-- Cart Section -->
+    <section id="cart" class="cart section">
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row">
+          <!-- Tabla de productos y resumen a la par -->
+          <div class="col-lg-8 col-md-12" data-aos="fade-up" data-aos-delay="200">
+            <div class="cart-items">
+              <div class="cart-header d-none d-lg-block">
+                <div class="row align-items-center">
+                  <div class="col-lg-6">
+                    <h5>Producto</h5>
+                  </div>
+                  <div class="col-lg-2 text-center">
+                    <h5>Precio</h5>
+                  </div>
+                  <div class="col-lg-2 text-center">
+                    <h5>Cantidad</h5>
+                  </div>
+                  <div class="col-lg-2 text-center">
+                    <h5>Total</h5>
+                  </div>
+                </div>
+              </div>
+              {% if productos %}
+                {% for producto in productos %}
+                <div class="cart-item">
+                  <div class="row align-items-center">
+                    <div class="col-lg-6 col-12 mt-3 mt-lg-0 mb-lg-0 mb-3">
+                      <div class="product-info d-flex align-items-center">
+                        <div class="product-image">
+                          {% if producto.imagen %}
+                            <img src="{{ producto.imagen }}" alt="Product" class="img-fluid" loading="lazy" style="max-width:80px; max-height:80px; object-fit:contain;">
+                          {% else %}
+                            <img src="{ # }" alt="Product" class="img-fluid" loading="lazy" style="max-width:80px; max-height:80px; object-fit:contain;">
+                          {% endif %}
+                        </div>
+                        <div class="product-details ms-3">
+                          <h6 class="product-title mb-1">{{ producto.nombre }}</h6>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-12 mt-3 mt-lg-0 text-center">
+                      <div class="price-tag">
+                          {% if producto.tiene_oferta %}
+                            <span class="current-price">Q {{ producto.precio }}</span>
+                            <br>
+                            <small class="text-muted text-decoration-line-through">Q {{ producto.precio_original }}</small>
+                          {% else %}
+                            <span class="current-price">Q {{ producto.precio }}</span>
+                          {% endif %}
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-12 mt-3 mt-lg-0 text-center">
+                      <div class="quantity-selector d-flex justify-content-center align-items-center">
+                        <form action="{% url 'Cliente:carrito_quitar' producto.id %}" method="post" style="display:inline;">
+                          {% csrf_token %}
+                          <input type="hidden" name="cantidad" value="{{ producto.cantidad|add:'-1' }}">
+                          <button type="submit" class="quantity-btn decrease btn btn-light" title="Restar">
+                            <i class="bi bi-dash"></i>
+                          </button>
+                        </form>
+                        <input type="number" class="quantity-input" value="{{ producto.cantidad }}" min="1" readonly>
+                        <form action="{% url 'Cliente:carrito_agregar' producto.id %}" method="post" style="display:inline;">
+                          {% csrf_token %}
+                          <input type="hidden" name="cantidad" value="1">
+                          <button type="submit" class="quantity-btn increase btn btn-light" title="Sumar">
+                            <i class="bi bi-plus"></i>
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-12 mt-3 mt-lg-0 text-center">
+                      <div class="item-total">
+                        <span>Q {{ producto.subtotal }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              {% else %}
+                <div class="cart-item">
+                  <div class="row align-items-center">
+                    <div class="col-12 text-center">
+                      <p>No hay productos en el carrito.</p>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-12" data-aos="fade-up" data-aos-delay="300">
+            <div class="cart-summary">
+              <h4 class="summary-title">Resumen del Pedido</h4>
+              <div class="summary-item">
+                <span class="summary-label">Subtotal</span>
+                <span class="summary-value">Q {{ total }}</span>
+              </div>
+              <div class="summary-item shipping-item">
+                <span class="summary-label">Envio</span>
+                <div class="shipping-options">
+                  {% if total > 75 %}
+                  <br
+                    <span class="form-check-label">Envío Gratis (Pedidos superiores a Q75)</span>
+                  {% else %}
+                    <br>
+                    <span class="form-check-label">Compras menores a Q75 =  Q25.00</span>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="summary-total">
+                <span class="summary-label">Total</span>
+                <span class="summary-value">Q {% if total > 75 %}{{ total }}{% else %}{{ total|add:25 }}{% endif %}</span>
+              </div>
+                {% if request.user.is_authenticated %}
+                <div class="checkout-button">
+                  {% if productos %}
+                    <a href="{% url 'Cliente:formulario_pedido' %}" class="btn btn-accent w-100">
+                      Continuar pedido <i class="bi bi-arrow-right"></i>
+                    </a>
+                  {% else %}
+                    <button type="button" class="btn btn-accent w-100" disabled aria-disabled="true">
+                      Continuar pedido <i class="bi bi-arrow-right"></i>
+                    </button>
+                  {% endif %}
+                </div>
+                {% else %}
+                <div class="checkout-button">
+                  <a href="{% url 'Cliente:loginapp' %}" class="btn btn-warning w-100">
+                    Inicia sesión para continuar el pedido <i class="bi bi-person"></i>
+                  </a>
+                </div>
+                {% endif %}
+              <div class="continue-shopping">
+                <a href="{% url 'Cliente:listadoProductos' %}" class="btn btn-link w-100">
+                  <i class="bi bi-arrow-left"></i> Continuar Comprando
+                </a>
+              </div>
+              <div class="payment-methods">
+                <p class="payment-title">Aceptamos</p>
+                <div class="payment-icons">
+                  <i class="bi bi-credit-card"></i>
+                  <i class="bi bi-paypal"></i>
+                  <i class="bi bi-wallet2"></i>
+                  <i class="bi bi-bank"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+{% endblock %}
